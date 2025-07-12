@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { notoSansKR } from '@/fonts/notoSansKR'
+import { notoSansKR } from './_fonts/notoSansKR'
 
 import './globals.css'
 
