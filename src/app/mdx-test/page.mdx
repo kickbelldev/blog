@@ -13,3 +13,20 @@ This is a list in markdown:
 Checkout my React component:
  
 <MyComponent />
+
+```tsx
+const a = 1
+type b = Record<string, number>
+const c: b = {
+  a: 1,
+  b: 2,
+}
+
+function f(a: b) {
+  return a.a
+}
+
+const e = f(c)
+
+console.log(e)
+```
