@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 
-import { getAllPosts } from '@/api/posts'
+import { getAllPosts } from '@/entities/posts'
 
 export async function generateStaticParams() {
   const posts = await getAllPosts()
