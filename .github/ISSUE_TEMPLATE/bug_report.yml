@@ -1,0 +1,72 @@
+name: 🐛 Bug Report
+description: 블로그에서 문제를 발견했나요?
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        개인 블로그 개선을 위한 버그 리포트입니다.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 🐛 버그 설명
+      description: 발생한 버그에 대해 명확하고 간결하게 설명해 주세요.
+      placeholder: 어떤 문제가 발생했나요?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 🔄 재현 방법
+      description: 버그를 재현하는 단계를 설명해 주세요.
+      placeholder: |
+        1. 이동: '...'
+        2. 클릭: '....'
+        3. 스크롤: '....'
+        4. 확인: 오류 발생
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: ✅ 예상 동작
+      description: 어떤 결과를 예상했는지 설명해 주세요.
+      placeholder: 무엇이 일어나야 했나요?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: ❌ 실제 동작
+      description: 실제로 어떤 일이 발생했는지 설명해 주세요.
+      placeholder: 실제로 무엇이 일어났나요?
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 📸 스크린샷
+      description: 해당되는 경우 스크린샷을 추가해 주세요.
+      placeholder: 스크린샷을 여기에 붙여넣어 주세요.
+
+  - type: input
+    id: environment
+    attributes:
+      label: 🌐 환경
+      description: 브라우저/기기 정보 (선택사항)
+      placeholder: "예: Chrome on macOS, Mobile Safari"
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 📝 추가 정보
+      description: 이 문제에 대한 추가 컨텍스트나 정보가 있나요?
+      placeholder: 기타 관련 정보...

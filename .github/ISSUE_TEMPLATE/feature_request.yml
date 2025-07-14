@@ -1,0 +1,56 @@
+name: 💡 Idea / Enhancement
+description: 블로그 개선 아이디어가 있나요?
+title: "[IDEA] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        개인 블로그 개선을 위한 아이디어나 제안입니다.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 🤔 문제점
+      description: 현재 어떤 문제가 있거나 불편한 점이 있나요?
+      placeholder: "예: 블로그에서 검색 기능이 없어서 원하는 글을 찾기 어렵습니다."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 💡 제안하는 해결책
+      description: 어떤 기능이나 변경사항을 원하시나요?
+      placeholder: "예: 블로그 상단에 검색창을 추가하여 제목과 내용으로 글을 검색할 수 있게 하면 좋겠습니다."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔄 대안
+      description: 다른 해결 방법이나 기능을 고려해 보셨나요?
+      placeholder: 다른 방법이나 접근법이 있다면 설명해 주세요.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: 📝 유형
+      description: 어떤 종류의 개선인가요?
+      options:
+        - UI/UX 개선
+        - 새로운 기능
+        - 성능 최적화
+        - 콘텐츠 관련
+        - 기타
+      default: 0
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 📝 추가 정보
+      description: 이 기능 제안에 대한 추가 컨텍스트나 정보가 있나요?
+      placeholder: 참고 자료, 예시, 관련 링크 등...
