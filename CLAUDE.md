@@ -138,7 +138,10 @@ This is a Next.js 15 blog application configured for static export with MDX supp
 - Next.js 15 with App Router
 - MDX for blog content with rehype-pretty-code syntax highlighting
 - Tailwind CSS for styling
+<<<<<<< HEAD
 - shadcn/ui for UI components
+=======
+>>>>>>> 31b508b (docs: CLAUDE.md 파일 추가)
 - TypeScript
 - Biome for code formatting/linting
 
@@ -191,7 +194,7 @@ The app is configured for static export (`output: 'export'` in next.config.ts) a
 ### Styling
 
 - Uses Tailwind CSS with custom configuration
-- shadcn/ui components with "new-york" style and stone base color
+- shadcn/ui for UI components
 - CSS variables for theming (light/dark mode support)
 - Noto Sans KR font for Korean language support
 - Prose styling for blog content rendering
