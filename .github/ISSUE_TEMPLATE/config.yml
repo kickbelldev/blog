@@ -1,1 +1,5 @@
-blank_issues_enabled: false
+blank_issues_enabled: true
+contact_links:
+  - name: 📖 블로그 방문
+    url: https://kickbelldev.github.io/blog
+    about: 실제 블로그를 확인해 보세요
