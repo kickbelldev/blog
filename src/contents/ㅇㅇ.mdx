@@ -1,0 +1,162 @@
+# App Router에서 getStaticParams와 404 페이지 처리하기
+
+Next.js 13부터 도입된 App Router에서는 동적 라우팅과 정적 생성을 위한 새로운 방식이 도입되었습니다. 이번 글에서는 `generateStaticParams` 함수와 404 페이지 처리에 대해 알아보겠습니다.
+
+## generateStaticParams란?
+
+App Router에서 `generateStaticParams`는 Pages Router의 `getStaticPaths`를 대체하는 함수입니다. 빌드 시점에 동적 라우트의 매개변수들을 미리 생성하여 정적 페이지들을 만들어줍니다.
+
+### 기본 사용법
+
+```typescript
+// app/blog/[slug]/page.tsx
+export async function generateStaticParams() {
+  const posts = await fetch('https://api.example.com/posts').then((res) => res.json())
+ 
+  return posts.map((post) => ({
+    slug: post.slug,
+  }))
+}
+
+export default function Page({ params }: { params: { slug: string } }) {
+  return <div>Post: {params.slug}</div>
+}
+```
+
+## 404 페이지 처리
+
+App Router에서 404 페이지를 처리하는 방법은 여러 가지가 있습니다.
+
+### 1. not-found.tsx 파일 사용
+
+```typescript
+// app/not-found.tsx
+export default function NotFound() {
+  return (
+    <div>
+      <h2>페이지를 찾을 수 없습니다</h2>
+      <p>요청하신 페이지를 찾을 수 없습니다.</p>
+    </div>
+  )
+}
+```
+
+### 2. 동적 라우트에서 notFound() 함수 사용
+
+```typescript
+// app/blog/[slug]/page.tsx
+import { notFound } from 'next/navigation'
+
+export async function generateStaticParams() {
+  const posts = await fetch('https://api.example.com/posts').then((res) => res.json())
+  
+  return posts.map((post) => ({
+    slug: post.slug,
+  }))
+}
+
+export default async function Page({ params }: { params: { slug: string } }) {
+  const post = await fetch(`https://api.example.com/posts/${params.slug}`)
+    .then((res) => res.json())
+    .catch(() => null)
+  
+  if (!post) {
+    notFound()
+  }
+  
+  return (
+    <div>
+      <h1>{post.title}</h1>
+      <p>{post.content}</p>
+    </div>
+  )
+}
+```
+
+## generateStaticParams와 404 페이지 조합하기
+
+`generateStaticParams`에서 정의하지 않은 매개변수로 접근할 때의 동작을 제어할 수 있습니다.
+
+### dynamicParams 옵션
+
+```typescript
+// app/blog/[slug]/page.tsx
+export const dynamicParams = false // 기본값은 true
+
+export async function generateStaticParams() {
+  return [
+    { slug: 'post-1' },
+    { slug: 'post-2' },
+    { slug: 'post-3' },
+  ]
+}
+```
+
+- `dynamicParams = true` (기본값): 정의되지 않은 매개변수도 동적으로 생성
+- `dynamicParams = false`: 정의되지 않은 매개변수는 404 페이지 반환
+
+### 실제 사용 예시
+
+```typescript
+// app/blog/[slug]/page.tsx
+import { notFound } from 'next/navigation'
+
+export const dynamicParams = false
+
+export async function generateStaticParams() {
+  try {
+    const posts = await fetch('https://api.example.com/posts', {
+      next: { revalidate: 3600 } // 1시간마다 재검증
+    }).then((res) => res.json())
+    
+    return posts.map((post) => ({
+      slug: post.slug,
+    }))
+  } catch (error) {
+    console.error('Failed to fetch posts:', error)
+    return []
+  }
+}
+
+async function getPost(slug: string) {
+  try {
+    const post = await fetch(`https://api.example.com/posts/${slug}`, {
+      next: { revalidate: 3600 }
+    }).then((res) => {
+      if (!res.ok) throw new Error('Post not found')
+      return res.json()
+    })
+    
+    return post
+  } catch (error) {
+    return null
+  }
+}
+
+export default async function BlogPost({ params }: { params: { slug: string } }) {
+  const post = await getPost(params.slug)
+  
+  if (!post) {
+    notFound()
+  }
+  
+  return (
+    <article>
+      <h1>{post.title}</h1>
+      <time>{new Date(post.createdAt).toLocaleDateString('ko-KR')}</time>
+      <div dangerouslySetInnerHTML={{ __html: post.content }} />
+    </article>
+  )
+}
+```
+
+## 마무리
+
+App Router에서 `generateStaticParams`를 사용하면 빌드 시점에 정적 페이지들을 미리 생성하여 성능을 향상시킬 수 있습니다. 동시에 적절한 404 페이지 처리를 통해 사용자 경험을 개선할 수 있습니다.
+
+주요 포인트:
+- `generateStaticParams`로 정적 매개변수 생성
+- `notFound()` 함수로 404 페이지 처리
+- `dynamicParams` 옵션으로 동적 매개변수 허용 여부 제어
+- 적절한 에러 처리와 재검증 설정으로 안정성 확보
+
