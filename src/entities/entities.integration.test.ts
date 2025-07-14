@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { Post } from './posts/types'
 import { getAllTags, getTagGraph, getTagRelationships } from './tags'
 
 // Mock posts entity with simplified data
@@ -16,7 +17,7 @@ describe('Entities Integration Tests', () => {
 
   describe('Posts and Tags Integration', () => {
     it('should correctly extract tags from posts and create relationships', async () => {
-      const mockPosts = [
+      const mockPosts: Pick<Post, 'slug' | 'data'>[] = [
         {
           slug: 'next-js-guide',
           data: {
@@ -55,7 +56,7 @@ describe('Entities Integration Tests', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(mockPosts as any)
+      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
 
       // Test tags extraction
       const tags = await getAllTags()
@@ -85,7 +86,7 @@ describe('Entities Integration Tests', () => {
     })
 
     it('should create proper graph relationships between tags', async () => {
-      const mockPosts = [
+      const mockPosts: Pick<Post, 'slug' | 'data'>[] = [
         {
           slug: 'web-dev',
           data: {
@@ -112,7 +113,7 @@ describe('Entities Integration Tests', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(mockPosts as any)
+      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
 
       const graph = await getTagGraph()
 
@@ -182,29 +183,29 @@ describe('Entities Integration Tests', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(mockPosts as any)
+      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
 
       const relationships = await getTagRelationships()
 
       // JavaScript should have the most relationships (appears in all 3 posts)
       const jsRelationship = relationships.find((r) => r.tag === 'JavaScript')
       expect(jsRelationship).toBeDefined()
-      expect(jsRelationship!.relatedTags).toHaveLength(4) // React, Vue, Frontend, Programming
+      expect(jsRelationship?.relatedTags).toHaveLength(4) // React, Vue, Frontend, Programming
 
       // Frontend should be connected to React and Vue
       const frontendRelationship = relationships.find(
         (r) => r.tag === 'Frontend'
       )
       expect(frontendRelationship).toBeDefined()
-      expect(frontendRelationship!.relatedTags).toHaveLength(3) // JavaScript, React, Vue
+      expect(frontendRelationship?.relatedTags).toHaveLength(3) // JavaScript, React, Vue
 
       // Programming should only be connected to JavaScript
       const programmingRelationship = relationships.find(
         (r) => r.tag === 'Programming'
       )
       expect(programmingRelationship).toBeDefined()
-      expect(programmingRelationship!.relatedTags).toHaveLength(1) // Only JavaScript
-      expect(programmingRelationship!.relatedTags[0].name).toBe('JavaScript')
+      expect(programmingRelationship?.relatedTags).toHaveLength(1) // Only JavaScript
+      expect(programmingRelationship?.relatedTags[0].name).toBe('JavaScript')
     })
 
     it('should handle edge cases in integration', async () => {
@@ -237,7 +238,7 @@ describe('Entities Integration Tests', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(mockPosts as any)
+      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
 
       const tags = await getAllTags()
       expect(tags).toHaveLength(2) // Only 'Normal' and 'Post' from the third post
@@ -304,7 +305,7 @@ describe('Entities Integration Tests', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(mockPosts as any)
+      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
 
       const tags = await getAllTags()
       const graph = await getTagGraph()
@@ -318,7 +319,7 @@ describe('Entities Integration Tests', () => {
       // JavaScript should be the most connected tag
       const jsNode = relationships.find((r) => r.tag === 'JavaScript')
       expect(jsNode).toBeDefined()
-      expect(jsNode!.relatedTags.length).toBeGreaterThanOrEqual(3)
+      expect(jsNode?.relatedTags.length).toBeGreaterThanOrEqual(3)
 
       // Verify graph structure makes sense
       expect(graph.hasEdge('React', 'Frontend')).toBe(true) // Co-occur in 2 posts

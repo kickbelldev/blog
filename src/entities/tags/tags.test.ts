@@ -1,6 +1,8 @@
 import { UndirectedGraph } from 'graphology'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { Post } from '../posts/types'
+
 import {
   getAllTags,
   getTagByName,
@@ -36,37 +38,14 @@ describe('Tags Entity', () => {
       },
     },
     {
-      slug: 'post1',
-      data: {
-        title: 'Post 1',
-        date: '2025-01-01',
-        tags: [
-          'React',
-          'JavaScript',
-          'Web',
-          'TypeScript',
-        ],
-      },
-    },
-    {
-      slug: 'post1',
-      data: {
-        title: 'Post 1',
-        date: '2025-01-01',
-        tags: [
-          'React',
-          'JavaScript',
-          'Web',
-        ],
-      },
-    },
-    {
       slug: 'post2',
       data: {
         title: 'Post 2',
-        date: '2025-01-02',
+        date: '2025-01-01',
         tags: [
           'React',
+          'JavaScript',
+          'Web',
           'TypeScript',
         ],
       },
@@ -75,6 +54,29 @@ describe('Tags Entity', () => {
       slug: 'post3',
       data: {
         title: 'Post 3',
+        date: '2025-01-01',
+        tags: [
+          'React',
+          'JavaScript',
+          'Web',
+        ],
+      },
+    },
+    {
+      slug: 'post4',
+      data: {
+        title: 'Post 4',
+        date: '2025-01-02',
+        tags: [
+          'React',
+          'TypeScript',
+        ],
+      },
+    },
+    {
+      slug: 'post5',
+      data: {
+        title: 'Post 5',
         date: '2025-01-03',
         tags: [
           'JavaScript',
@@ -86,7 +88,7 @@ describe('Tags Entity', () => {
 
   describe('getAllTags', () => {
     it('should return all tags with counts and post references', async () => {
-      mockGetAllPosts.mockResolvedValue(mockPosts as any)
+      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
 
       const result = await getAllTags()
 
@@ -98,9 +100,9 @@ describe('Tags Entity', () => {
         count: 4,
         posts: [
           'post1',
-          'post1',
-          'post1',
           'post2',
+          'post3',
+          'post4',
         ],
       })
       expect(result[1]).toEqual({
@@ -108,9 +110,9 @@ describe('Tags Entity', () => {
         count: 4,
         posts: [
           'post1',
-          'post1',
-          'post1',
+          'post2',
           'post3',
+          'post5',
         ],
       })
 
@@ -119,8 +121,8 @@ describe('Tags Entity', () => {
         name: 'TypeScript',
         count: 2,
         posts: [
-          'post1',
           'post2',
+          'post4',
         ],
       })
     })
@@ -146,7 +148,7 @@ describe('Tags Entity', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(postsWithoutTags as any)
+      mockGetAllPosts.mockResolvedValue(postsWithoutTags as Post[])
 
       const result = await getAllTags()
 
@@ -171,7 +173,7 @@ describe('Tags Entity', () => {
 
   describe('getTagByName', () => {
     it('should return specific tag by name', async () => {
-      mockGetAllPosts.mockResolvedValue(mockPosts as any)
+      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
 
       const result = await getTagByName('React')
 
@@ -180,15 +182,15 @@ describe('Tags Entity', () => {
         count: 4,
         posts: [
           'post1',
-          'post1',
-          'post1',
           'post2',
+          'post3',
+          'post4',
         ],
       })
     })
 
     it('should return null for non-existent tag', async () => {
-      mockGetAllPosts.mockResolvedValue(mockPosts as any)
+      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
 
       const result = await getTagByName('NonExistent')
 
@@ -198,7 +200,7 @@ describe('Tags Entity', () => {
 
   describe('getTagGraph', () => {
     it('should create a graph with nodes and edges', async () => {
-      mockGetAllPosts.mockResolvedValue(mockPosts as any)
+      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
 
       const graph = await getTagGraph()
 
@@ -218,9 +220,9 @@ describe('Tags Entity', () => {
         weight: 4 / 5, // 2 occurrences out of 3 posts
         posts: [
           'post1',
-          'post1',
-          'post1',
           'post2',
+          'post3',
+          'post4',
         ],
       })
 
@@ -261,7 +263,7 @@ describe('Tags Entity', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(singleTagPosts as any)
+      mockGetAllPosts.mockResolvedValue(singleTagPosts as Post[])
 
       const graph = await getTagGraph()
 
@@ -272,7 +274,7 @@ describe('Tags Entity', () => {
 
   describe('getTagRelationships', () => {
     it('should return relationships for all tags', async () => {
-      mockGetAllPosts.mockResolvedValue(mockPosts as any)
+      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
 
       const relationships = await getTagRelationships()
 
@@ -281,12 +283,12 @@ describe('Tags Entity', () => {
       // Find React relationships
       const reactRelationship = relationships.find((r) => r.tag === 'React')
       expect(reactRelationship).toBeDefined()
-      expect(reactRelationship!.relatedTags).toHaveLength(3) // JavaScript, TypeScript, Web
+      expect(reactRelationship?.relatedTags).toHaveLength(3) // JavaScript, TypeScript, Web
 
       // Should be sorted by similarity (descending)
-      expect(reactRelationship!.relatedTags[0].name).toBe('JavaScript')
-      expect(reactRelationship!.relatedTags[0].cooccurrence).toBe(3)
-      expect(reactRelationship!.relatedTags[0].similarity).toBeGreaterThan(0)
+      expect(reactRelationship?.relatedTags[0].name).toBe('JavaScript')
+      expect(reactRelationship?.relatedTags[0].cooccurrence).toBe(3)
+      expect(reactRelationship?.relatedTags[0].similarity).toBeGreaterThan(0)
     })
 
     it('should handle tags with no relationships', async () => {
@@ -303,7 +305,7 @@ describe('Tags Entity', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(isolatedTagPosts as any)
+      mockGetAllPosts.mockResolvedValue(isolatedTagPosts as Post[])
 
       const relationships = await getTagRelationships()
 
@@ -315,7 +317,7 @@ describe('Tags Entity', () => {
 
   describe('getTagClusters', () => {
     it('should create clusters based on centrality', async () => {
-      mockGetAllPosts.mockResolvedValue(mockPosts as any)
+      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
 
       const clusters = await getTagClusters()
 
@@ -347,7 +349,7 @@ describe('Tags Entity', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(singleTagPosts as any)
+      mockGetAllPosts.mockResolvedValue(singleTagPosts as Post[])
 
       const clusters = await getTagClusters()
 
@@ -421,20 +423,20 @@ describe('Tags Entity', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(weakRelationshipPosts as any)
+      mockGetAllPosts.mockResolvedValue(weakRelationshipPosts as Post[])
 
       const clusters = await getTagClusters()
 
       // React should be the main cluster with high centrality
       const reactCluster = clusters.find((c) => c.id === 'React')
       expect(reactCluster).toBeDefined()
-      expect(reactCluster!.centrality).toBe(4) // Connected to 4 other tags
+      expect(reactCluster?.centrality).toBe(4) // Connected to 4 other tags
 
       // Vue should be isolated with no connections
       const vueCluster = clusters.find((c) => c.id === 'Vue')
       expect(vueCluster).toBeDefined()
-      expect(vueCluster!.centrality).toBe(0)
-      expect(vueCluster!.tags).toEqual([
+      expect(vueCluster?.centrality).toBe(0)
+      expect(vueCluster?.tags).toEqual([
         'Vue',
       ])
     })
@@ -442,7 +444,7 @@ describe('Tags Entity', () => {
 
   describe('getTagStats', () => {
     it('should return comprehensive tag statistics', async () => {
-      mockGetAllPosts.mockResolvedValue(mockPosts as any)
+      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
 
       const stats = await getTagStats()
 
@@ -454,9 +456,9 @@ describe('Tags Entity', () => {
           count: 4,
           posts: [
             'post1',
-            'post1',
-            'post1',
             'post2',
+            'post3',
+            'post4',
           ],
         },
         leastUsed: expect.objectContaining({
