@@ -27,12 +27,12 @@ export default async function PostPage({
     )
 
     return (
-      <div className="prose">
+      <div className="prose prose-stone">
         <Post />
       </div>
     )
   } catch (_error) {
-    console.log(_error)
+    console.error(_error)
     notFound()
   }
 }
