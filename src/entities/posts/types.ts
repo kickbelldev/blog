@@ -5,6 +5,6 @@ export interface Post extends GrayMatterFile<string> {
   data: {
     date: string
     title: string
-    tag: Array<string>
+    tags: Array<string>
   }
 }
