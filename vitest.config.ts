@@ -12,6 +12,9 @@ export default defineConfig({
       include: [
         'src/entities/**/*.ts',
       ],
+      exclude: [
+        '**/types.ts',
+      ],
     },
   },
   resolve: {

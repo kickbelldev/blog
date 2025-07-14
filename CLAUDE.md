@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This project uses Biome for formatting and linting. Always run `pnpm biome:check` before committing changes. The project has a pre-commit hook (lefthook) that automatically runs Biome on staged files.
 
 **IMPORTANT**: 
-- Do NOT run `pnpm build` during development tasks unless specifically requested by the user. The build process is mainly for final deployment verification.
+- Do NOT run `pnpm dev` or `pnpm build` during development tasks unless specifically requested by the user. The build process is mainly for final deployment verification.
 - When implementing new pages or components, use placeholders instead of actual content. Show what type of content should go in each position rather than writing fake content.
 - Do NOT create UI structures arbitrarily. Always ask the user for specific requirements and approval before implementing any UI design or structure.
 
