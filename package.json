@@ -6,13 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "biome:check": "biome check --write --verbose",
-    "biome:staged": "biome check --write --staged --verbose"
+    "biome:check": "biome check --verbose",
+    "biome:fix": "biome check --write --verbose",
+    "biome:staged": "biome check --write --staged"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^15.3.5",
+    "@radix-ui/react-separator": "^1.1.7",
+    "@radix-ui/react-slot": "^1.2.3",
     "@types/mdx": "^2.0.13",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
