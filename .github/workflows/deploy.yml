@@ -41,6 +41,9 @@ jobs:
       
     - name: Build with Next.js
       run: pnpm build
+
+    - name: Add .nojekyll file
+      run: touch ./out/.nojekyll
       
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
