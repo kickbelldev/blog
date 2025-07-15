@@ -1,32 +1,23 @@
 import { UndirectedGraph } from 'graphology'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import type { Post } from '../posts/types'
 
 import {
-  getAllTags,
-  getTagByName,
-  getTagClusters,
-  getTagGraph,
-  getTagRelationships,
-  getTagStats,
-} from './index'
+  analyzeTagRelationships,
+  calculateTagStats,
+  createTagClusters,
+  createTagGraph,
+  extractTagsFromPosts,
+  findTagByName,
+} from './logic'
+import type { TagEdgeAttributes, TagNodeAttributes } from './types'
 
-// Mock posts entity
-vi.mock('../posts', () => ({
-  getAllPosts: vi.fn(),
-}))
-
-const mockGetAllPosts = vi.mocked(await import('../posts')).getAllPosts
-
-describe('Tags Entity', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  const mockPosts = [
+describe('Tags Logic', () => {
+  const mockPosts: Post[] = [
     {
       slug: 'post1',
+      content: 'Content 1',
       data: {
         title: 'Post 1',
         date: '2025-01-01',
@@ -39,6 +30,7 @@ describe('Tags Entity', () => {
     },
     {
       slug: 'post2',
+      content: 'Content 2',
       data: {
         title: 'Post 2',
         date: '2025-01-01',
@@ -52,6 +44,7 @@ describe('Tags Entity', () => {
     },
     {
       slug: 'post3',
+      content: 'Content 3',
       data: {
         title: 'Post 3',
         date: '2025-01-01',
@@ -64,6 +57,7 @@ describe('Tags Entity', () => {
     },
     {
       slug: 'post4',
+      content: 'Content 4',
       data: {
         title: 'Post 4',
         date: '2025-01-02',
@@ -75,6 +69,7 @@ describe('Tags Entity', () => {
     },
     {
       slug: 'post5',
+      content: 'Content 5',
       data: {
         title: 'Post 5',
         date: '2025-01-03',
@@ -86,11 +81,9 @@ describe('Tags Entity', () => {
     },
   ]
 
-  describe('getAllTags', () => {
-    it('should return all tags with counts and post references', async () => {
-      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
-
-      const result = await getAllTags()
+  describe('extractTagsFromPosts', () => {
+    it('should extract all tags with counts and post references', () => {
+      const result = extractTagsFromPosts(mockPosts)
 
       expect(result).toHaveLength(5)
 
@@ -127,17 +120,20 @@ describe('Tags Entity', () => {
       })
     })
 
-    it('should handle posts without tags', async () => {
-      const postsWithoutTags = [
+    it('should handle posts without tags', () => {
+      const postsWithoutTags: Post[] = [
         {
           slug: 'post1',
+          content: 'Content 1',
           data: {
             title: 'Post 1',
             date: '2025-01-01',
+            tags: [],
           },
         },
         {
           slug: 'post2',
+          content: 'Content 2',
           data: {
             title: 'Post 2',
             date: '2025-01-02',
@@ -148,9 +144,7 @@ describe('Tags Entity', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(postsWithoutTags as Post[])
-
-      const result = await getAllTags()
+      const result = extractTagsFromPosts(postsWithoutTags)
 
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual({
@@ -162,20 +156,52 @@ describe('Tags Entity', () => {
       })
     })
 
-    it('should handle empty posts array', async () => {
-      mockGetAllPosts.mockResolvedValue([])
-
-      const result = await getAllTags()
-
+    it('should handle empty posts array', () => {
+      const result = extractTagsFromPosts([])
       expect(result).toEqual([])
+    })
+
+    it('should handle posts with undefined tags', () => {
+      const postsWithUndefinedTags: Post[] = [
+        {
+          slug: 'post1',
+          content: 'Content 1',
+          data: {
+            title: 'Post 1',
+            date: '2025-01-01',
+            tags: undefined as any, // Simulate undefined tags
+          },
+        },
+        {
+          slug: 'post2',
+          content: 'Content 2',
+          data: {
+            title: 'Post 2',
+            date: '2025-01-02',
+            tags: [
+              'React',
+            ],
+          },
+        },
+      ]
+
+      const result = extractTagsFromPosts(postsWithUndefinedTags)
+
+      expect(result).toHaveLength(1)
+      expect(result[0]).toEqual({
+        name: 'React',
+        count: 1,
+        posts: [
+          'post2',
+        ],
+      })
     })
   })
 
-  describe('getTagByName', () => {
-    it('should return specific tag by name', async () => {
-      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
-
-      const result = await getTagByName('React')
+  describe('findTagByName', () => {
+    it('should find specific tag by name', () => {
+      const tags = extractTagsFromPosts(mockPosts)
+      const result = findTagByName(tags, 'React')
 
       expect(result).toEqual({
         name: 'React',
@@ -189,20 +215,23 @@ describe('Tags Entity', () => {
       })
     })
 
-    it('should return null for non-existent tag', async () => {
-      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
+    it('should return null for non-existent tag', () => {
+      const tags = extractTagsFromPosts(mockPosts)
+      const result = findTagByName(tags, 'NonExistent')
 
-      const result = await getTagByName('NonExistent')
+      expect(result).toBeNull()
+    })
 
+    it('should handle empty tags array', () => {
+      const result = findTagByName([], 'React')
       expect(result).toBeNull()
     })
   })
 
-  describe('getTagGraph', () => {
-    it('should create a graph with nodes and edges', async () => {
-      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
-
-      const graph = await getTagGraph()
+  describe('createTagGraph', () => {
+    it('should create a graph with nodes and edges', () => {
+      const tags = extractTagsFromPosts(mockPosts)
+      const graph = createTagGraph(mockPosts, tags)
 
       expect(graph).toBeInstanceOf(UndirectedGraph)
 
@@ -217,7 +246,7 @@ describe('Tags Entity', () => {
       expect(reactAttrs).toEqual({
         name: 'React',
         count: 4,
-        weight: 4 / 5, // 2 occurrences out of 3 posts
+        weight: 4 / 5, // 4 occurrences out of 5 posts
         posts: [
           'post1',
           'post2',
@@ -227,9 +256,9 @@ describe('Tags Entity', () => {
       })
 
       // Check edges (co-occurrence)
-      expect(graph.hasEdge('React', 'JavaScript')).toBe(true) // Both in post1
-      expect(graph.hasEdge('React', 'TypeScript')).toBe(true) // Both in post2
-      expect(graph.hasEdge('JavaScript', 'Node.js')).toBe(true) // Both in post3
+      expect(graph.hasEdge('React', 'JavaScript')).toBe(true)
+      expect(graph.hasEdge('React', 'TypeScript')).toBe(true)
+      expect(graph.hasEdge('JavaScript', 'Node.js')).toBe(true)
 
       // Check edge attributes
       const edgeAttrs = graph.getEdgeAttributes('React', 'JavaScript')
@@ -239,10 +268,11 @@ describe('Tags Entity', () => {
       })
     })
 
-    it('should handle single tag posts', async () => {
-      const singleTagPosts = [
+    it('should handle single tag posts', () => {
+      const singleTagPosts: Post[] = [
         {
           slug: 'post1',
+          content: 'Content 1',
           data: {
             title: 'Post 1',
             date: '2025-01-01',
@@ -253,6 +283,7 @@ describe('Tags Entity', () => {
         },
         {
           slug: 'post2',
+          content: 'Content 2',
           data: {
             title: 'Post 2',
             date: '2025-01-02',
@@ -263,20 +294,58 @@ describe('Tags Entity', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(singleTagPosts as Post[])
-
-      const graph = await getTagGraph()
+      const tags = extractTagsFromPosts(singleTagPosts)
+      const graph = createTagGraph(singleTagPosts, tags)
 
       expect(graph.order).toBe(2)
       expect(graph.size).toBe(0) // No edges since no co-occurrences
     })
+
+    it('should handle empty posts', () => {
+      const tags = extractTagsFromPosts([])
+      const graph = createTagGraph([], tags)
+
+      expect(graph.order).toBe(0)
+      expect(graph.size).toBe(0)
+    })
+
+    it('should handle posts with undefined tags in graph creation', () => {
+      const postsWithUndefinedTags: Post[] = [
+        {
+          slug: 'post1',
+          content: 'Content 1',
+          data: {
+            title: 'Post 1',
+            date: '2025-01-01',
+            tags: undefined as any,
+          },
+        },
+        {
+          slug: 'post2',
+          content: 'Content 2',
+          data: {
+            title: 'Post 2',
+            date: '2025-01-02',
+            tags: [
+              'React',
+            ],
+          },
+        },
+      ]
+
+      const tags = extractTagsFromPosts(postsWithUndefinedTags)
+      const graph = createTagGraph(postsWithUndefinedTags, tags)
+
+      expect(graph.order).toBe(1) // Only React tag
+      expect(graph.size).toBe(0) // No edges since only one tag
+    })
   })
 
-  describe('getTagRelationships', () => {
-    it('should return relationships for all tags', async () => {
-      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
-
-      const relationships = await getTagRelationships()
+  describe('analyzeTagRelationships', () => {
+    it('should return relationships for all tags', () => {
+      const tags = extractTagsFromPosts(mockPosts)
+      const graph = createTagGraph(mockPosts, tags)
+      const relationships = analyzeTagRelationships(graph)
 
       expect(relationships).toHaveLength(5)
 
@@ -291,10 +360,11 @@ describe('Tags Entity', () => {
       expect(reactRelationship?.relatedTags[0].similarity).toBeGreaterThan(0)
     })
 
-    it('should handle tags with no relationships', async () => {
-      const isolatedTagPosts = [
+    it('should handle tags with no relationships', () => {
+      const isolatedTagPosts: Post[] = [
         {
           slug: 'post1',
+          content: 'Content 1',
           data: {
             title: 'Post 1',
             date: '2025-01-01',
@@ -305,21 +375,28 @@ describe('Tags Entity', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(isolatedTagPosts as Post[])
-
-      const relationships = await getTagRelationships()
+      const tags = extractTagsFromPosts(isolatedTagPosts)
+      const graph = createTagGraph(isolatedTagPosts, tags)
+      const relationships = analyzeTagRelationships(graph)
 
       expect(relationships).toHaveLength(1)
       expect(relationships[0].tag).toBe('React')
       expect(relationships[0].relatedTags).toHaveLength(0)
     })
+
+    it('should handle empty graph', () => {
+      const graph = new UndirectedGraph<TagNodeAttributes, TagEdgeAttributes>()
+      const relationships = analyzeTagRelationships(graph)
+
+      expect(relationships).toEqual([])
+    })
   })
 
-  describe('getTagClusters', () => {
-    it('should create clusters based on centrality', async () => {
-      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
-
-      const clusters = await getTagClusters()
+  describe('createTagClusters', () => {
+    it('should create clusters based on centrality', () => {
+      const tags = extractTagsFromPosts(mockPosts)
+      const graph = createTagGraph(mockPosts, tags)
+      const clusters = createTagClusters(graph)
 
       expect(clusters.length).toBeGreaterThan(0)
 
@@ -335,10 +412,11 @@ describe('Tags Entity', () => {
       })
     })
 
-    it('should handle single tag scenario', async () => {
-      const singleTagPosts = [
+    it('should handle single tag scenario', () => {
+      const singleTagPosts: Post[] = [
         {
           slug: 'post1',
+          content: 'Content 1',
           data: {
             title: 'Post 1',
             date: '2025-01-01',
@@ -349,9 +427,9 @@ describe('Tags Entity', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(singleTagPosts as Post[])
-
-      const clusters = await getTagClusters()
+      const tags = extractTagsFromPosts(singleTagPosts)
+      const graph = createTagGraph(singleTagPosts, tags)
+      const clusters = createTagClusters(graph)
 
       expect(clusters).toHaveLength(1)
       expect(clusters[0]).toEqual({
@@ -364,11 +442,11 @@ describe('Tags Entity', () => {
       })
     })
 
-    it('should handle weak relationships in clustering', async () => {
-      // Create posts with weak co-occurrence relationships
-      const weakRelationshipPosts = [
+    it('should handle weak relationships in clustering', () => {
+      const weakRelationshipPosts: Post[] = [
         {
           slug: 'post1',
+          content: 'Content 1',
           data: {
             title: 'Post 1',
             date: '2025-01-01',
@@ -380,6 +458,7 @@ describe('Tags Entity', () => {
         },
         {
           slug: 'post2',
+          content: 'Content 2',
           data: {
             title: 'Post 2',
             date: '2025-01-02',
@@ -391,6 +470,7 @@ describe('Tags Entity', () => {
         },
         {
           slug: 'post3',
+          content: 'Content 3',
           data: {
             title: 'Post 3',
             date: '2025-01-03',
@@ -402,6 +482,7 @@ describe('Tags Entity', () => {
         },
         {
           slug: 'post4',
+          content: 'Content 4',
           data: {
             title: 'Post 4',
             date: '2025-01-04',
@@ -413,6 +494,7 @@ describe('Tags Entity', () => {
         },
         {
           slug: 'post5',
+          content: 'Content 5',
           data: {
             title: 'Post 5',
             date: '2025-01-05',
@@ -423,9 +505,9 @@ describe('Tags Entity', () => {
         },
       ]
 
-      mockGetAllPosts.mockResolvedValue(weakRelationshipPosts as Post[])
-
-      const clusters = await getTagClusters()
+      const tags = extractTagsFromPosts(weakRelationshipPosts)
+      const graph = createTagGraph(weakRelationshipPosts, tags)
+      const clusters = createTagClusters(graph)
 
       // React should be the main cluster with high centrality
       const reactCluster = clusters.find((c) => c.id === 'React')
@@ -440,13 +522,49 @@ describe('Tags Entity', () => {
         'Vue',
       ])
     })
+
+    it('should test strong relationships threshold in clustering', () => {
+      // Create posts with very strong co-occurrence (5 out of 5 posts)
+      const strongRelationshipPosts: Post[] = Array.from(
+        {
+          length: 5,
+        },
+        (_, i) => ({
+          slug: `post${i + 1}`,
+          content: `Content ${i + 1}`,
+          data: {
+            title: `Post ${i + 1}`,
+            date: `2025-01-0${i + 1}`,
+            tags: [
+              'React',
+              'JavaScript',
+            ],
+          },
+        })
+      )
+
+      const tags = extractTagsFromPosts(strongRelationshipPosts)
+      const graph = createTagGraph(strongRelationshipPosts, tags)
+      const clusters = createTagClusters(graph)
+
+      // Should create clusters with strong relationships
+      const reactCluster = clusters.find((c) => c.id === 'React')
+      expect(reactCluster).toBeDefined()
+      expect(reactCluster?.tags).toContain('JavaScript') // Should include JavaScript due to high weight (1.0 > 0.3)
+    })
+
+    it('should handle empty graph', () => {
+      const graph = new UndirectedGraph<TagNodeAttributes, TagEdgeAttributes>()
+      const clusters = createTagClusters(graph)
+
+      expect(clusters).toEqual([])
+    })
   })
 
-  describe('getTagStats', () => {
-    it('should return comprehensive tag statistics', async () => {
-      mockGetAllPosts.mockResolvedValue(mockPosts as Post[])
-
-      const stats = await getTagStats()
+  describe('calculateTagStats', () => {
+    it('should return comprehensive tag statistics', () => {
+      const tags = extractTagsFromPosts(mockPosts)
+      const stats = calculateTagStats(tags)
 
       expect(stats).toEqual({
         total: 5, // 5 unique tags
@@ -468,10 +586,8 @@ describe('Tags Entity', () => {
       })
     })
 
-    it('should handle no tags', async () => {
-      mockGetAllPosts.mockResolvedValue([])
-
-      const stats = await getTagStats()
+    it('should handle no tags', () => {
+      const stats = calculateTagStats([])
 
       expect(stats).toEqual({
         total: 0,
@@ -479,6 +595,32 @@ describe('Tags Entity', () => {
         mostUsed: undefined,
         leastUsed: undefined,
         average: 0,
+      })
+    })
+
+    it('should handle single tag', () => {
+      const singleTag = [
+        {
+          name: 'React',
+          count: 5,
+          posts: [
+            'post1',
+            'post2',
+            'post3',
+            'post4',
+            'post5',
+          ],
+        },
+      ]
+
+      const stats = calculateTagStats(singleTag)
+
+      expect(stats).toEqual({
+        total: 1,
+        totalOccurrences: 5,
+        mostUsed: singleTag[0],
+        leastUsed: singleTag[0],
+        average: 5,
       })
     })
   })
