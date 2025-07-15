@@ -32,12 +32,5 @@ jobs:
     - name: Type check
       run: pnpm tsc --noEmit
       
-    - name: Build
-      run: pnpm build
-      
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-output
-        path: out/
-        retention-days: 1
+    - name: Run tests
+      run: pnpm test:run

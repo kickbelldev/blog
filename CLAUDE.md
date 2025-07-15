@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This project uses Biome for formatting and linting. Always run `pnpm biome:check` before committing changes. The project has a pre-commit hook (lefthook) that automatically runs Biome on staged files.
 
 **IMPORTANT**: 
-- Do NOT run `pnpm build` during development tasks unless specifically requested by the user. The build process is mainly for final deployment verification.
+- Do NOT run `pnpm dev` or `pnpm build` during development tasks unless specifically requested by the user. The build process is mainly for final deployment verification.
 - When implementing new pages or components, use placeholders instead of actual content. Show what type of content should go in each position rather than writing fake content.
 - Do NOT create UI structures arbitrarily. Always ask the user for specific requirements and approval before implementing any UI design or structure.
 
@@ -163,7 +163,7 @@ All client-side code is organized under `src/app/` following Next.js App Router 
   - `page.tsx` - Home page
   - `not-found.tsx` - 404 error page
   - `globals.css` - Global styles
-- `src/api/` - Server-side utilities (outside app directory)
+- `src/entities/` - Domain entities and business logic (outside app directory)
 - `src/contents/` - MDX blog posts (*.mdx files)
 
 **Naming Convention:** 
@@ -173,12 +173,26 @@ All client-side code is organized under `src/app/` following Next.js App Router 
   - Page/Feature scope: `src/app/[route]/_components/`, `src/app/[route]/_hooks/`
 - This ensures components and logic are co-located with their usage while maintaining clear boundaries
 
+### Domain Architecture
+
+This project follows Domain-Driven Design principles with entities organized in `src/entities/`:
+
+- `src/entities/posts/` - Blog post domain logic
+  - Repository pattern for data access
+  - Post entity with type definitions
+  - Business logic for post operations
+- `src/entities/tags/` - Tag system domain logic
+  - Tag entity and graph relationships
+  - Tag operations and queries
+  - Graph-based tag analysis
+
 ### Content Management
 
-Blog posts are stored as MDX files in `src/contents/`. The `src/api/posts.ts` module handles:
-- Reading MDX files from the contents directory
-- Parsing frontmatter with gray-matter
-- Generating static routes for blog posts
+Blog posts are stored as MDX files in `src/contents/`. Each MDX file contains:
+- **Frontmatter**: YAML metadata with `title`, `date`, `slug`, and `tags` information
+- **Content**: Markdown content with JSX component support
+
+The post entity in `src/entities/posts/` handles parsing and processing of these MDX files.
 
 ### Static Generation
 
