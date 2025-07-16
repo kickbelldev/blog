@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 
+import { PostContent } from '@/app/posts/_components'
 import { getAllPosts } from '@/entities/posts'
 
 export async function generateStaticParams() {
@@ -27,8 +28,10 @@ export default async function PostPage({
     )
 
     return (
-      <div className="prose prose-stone">
-        <Post />
+      <div className="container mx-auto px-5 py-8 max-w-4xl">
+        <PostContent>
+          <Post />
+        </PostContent>
       </div>
     )
   } catch (_error) {

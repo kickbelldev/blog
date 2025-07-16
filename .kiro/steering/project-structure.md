@@ -101,6 +101,9 @@ src/
 
 ## 콘텐츠 관리
 
+### 콘텐츠 위치
+`src/contents/*.mdx`
+
 ### MDX 구조
 ```yaml
 ---

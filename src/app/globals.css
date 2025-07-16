@@ -119,3 +119,214 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  /* Enhanced code block styling for better mobile experience */
+  .prose pre {
+    /* Ensure proper scrolling on mobile */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: theme(colors.stone.400) theme(colors.stone.100);
+  }
+
+  .dark .prose pre {
+    scrollbar-color: theme(colors.stone.600) theme(colors.stone.800);
+  }
+
+  /* Custom scrollbar for webkit browsers */
+  .prose pre::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+
+  .prose pre::-webkit-scrollbar-track {
+    background: theme(colors.stone.100);
+    border-radius: 4px;
+  }
+
+  .prose pre::-webkit-scrollbar-thumb {
+    background: theme(colors.stone.400);
+    border-radius: 4px;
+  }
+
+  .prose pre::-webkit-scrollbar-thumb:hover {
+    background: theme(colors.stone.500);
+  }
+
+  .dark .prose pre::-webkit-scrollbar-track {
+    background: theme(colors.stone.800);
+  }
+
+  .dark .prose pre::-webkit-scrollbar-thumb {
+    background: theme(colors.stone.600);
+  }
+
+  .dark .prose pre::-webkit-scrollbar-thumb:hover {
+    background: theme(colors.stone.500);
+  }
+
+  /* Enhanced code block styling with rehype-pretty-code */
+  .prose pre[data-theme] {
+    background-color: theme(colors.stone.900) !important;
+    border: 1px solid theme(colors.stone.200);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .dark .prose pre[data-theme] {
+    background-color: theme(colors.stone.950) !important;
+    border-color: theme(colors.stone.700);
+  }
+
+  /* Code block title styling */
+  .prose pre[data-title]::before {
+    content: attr(data-title);
+    display: block;
+    background: theme(colors.stone.800);
+    color: theme(colors.stone.200);
+    padding: 0.5rem 1rem;
+    margin: -1.5rem -1.5rem 1rem -1.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-bottom: 1px solid theme(colors.stone.700);
+  }
+
+  .dark .prose pre[data-title]::before {
+    background: theme(colors.stone.900);
+    border-bottom-color: theme(colors.stone.600);
+  }
+
+  /* Line highlighting */
+  .prose pre [data-highlighted-line] {
+    background: rgba(255, 255, 255, 0.1);
+    border-left: 3px solid theme(colors.blue.400);
+    padding-left: 1rem;
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  /* Line numbers */
+  .prose pre [data-line-numbers] {
+    counter-reset: line;
+  }
+
+  .prose pre [data-line-numbers] > [data-line]::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    width: 2rem;
+    margin-right: 1rem;
+    text-align: right;
+    color: theme(colors.stone.500);
+    font-size: 0.75rem;
+  }
+
+  /* Enhanced image styling for better responsive behavior */
+  .prose img {
+    border-radius: 0.5rem;
+    box-shadow:
+      0 10px 25px -5px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    margin: 2rem auto;
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .dark .prose img {
+    box-shadow:
+      0 10px 25px -5px rgba(0, 0, 0, 0.3),
+      0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Enhanced blockquote styling */
+  .prose blockquote {
+    position: relative;
+    background: theme(colors.stone.50);
+    border-left: 4px solid theme(colors.stone.300);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    font-style: italic;
+    font-weight: 500;
+    color: theme(colors.stone.700);
+  }
+
+  .dark .prose blockquote {
+    background: rgba(120, 113, 108, 0.1);
+    border-left-color: theme(colors.stone.600);
+    color: theme(colors.stone.300);
+  }
+
+  .prose blockquote::before {
+    content: '"';
+    position: absolute;
+    top: 0.5rem;
+    left: 1rem;
+    font-size: 2rem;
+    color: theme(colors.stone.400);
+    font-family: serif;
+  }
+
+  .dark .prose blockquote::before {
+    color: theme(colors.stone.600);
+  }
+
+  /* Enhanced table styling */
+  .prose table {
+    border-collapse: collapse;
+    margin: 2rem 0;
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 768px) {
+    .prose table {
+      display: table;
+      white-space: normal;
+    }
+  }
+
+  .prose thead {
+    background: theme(colors.stone.50);
+  }
+
+  .dark .prose thead {
+    background: theme(colors.stone.800);
+  }
+
+  .prose th,
+  .prose td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid theme(colors.stone.200);
+  }
+
+  .dark .prose th,
+  .dark .prose td {
+    border-bottom-color: theme(colors.stone.700);
+  }
+
+  .prose th {
+    font-weight: 600;
+    color: theme(colors.stone.900);
+  }
+
+  .dark .prose th {
+    color: theme(colors.stone.100);
+  }
+
+  .prose td {
+    color: theme(colors.stone.700);
+  }
+
+  .dark .prose td {
+    color: theme(colors.stone.300);
+  }
+}
