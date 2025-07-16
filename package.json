@@ -12,7 +12,8 @@
     "test:coverage": "vitest run --coverage",
     "biome:check": "biome check --verbose",
     "biome:fix": "biome check --write --verbose",
-    "biome:staged": "biome check --write --staged"
+    "biome:staged": "biome check --write --staged",
+    "type": "tsc --noEmit"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",
