@@ -8,7 +8,7 @@ export function formatDate(dateString: string | Date): string {
     typeof dateString === 'string' ? new Date(dateString) : dateString
 
   // Check if date is valid
-  if (isNaN(date.getTime())) {
+  if (Number.isNaN(date.getTime())) {
     return dateString.toString()
   }
 
