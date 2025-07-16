@@ -1,6 +1,9 @@
 import { cn } from '@/app/_lib/cn'
 import type { Post } from '@/entities/posts/types'
 
+import { PostNavigation } from './PostNavigation'
+import { RelatedPosts } from './RelatedPosts'
+
 interface PostFooterProps {
   previousPost?: Pick<Post, 'slug' | 'data'>
   nextPost?: Pick<Post, 'slug' | 'data'>
@@ -17,22 +20,9 @@ export function PostFooter({
   className,
 }: PostFooterProps) {
   return (
-    <footer className={cn('mt-12 pt-8 border-t border-stone-200', className)}>
-      {/* TODO: Implement PostNavigation component */}
-      {(previousPost || nextPost) && (
-        <div className="mb-8">
-          <div className="text-sm text-stone-600">Navigation (TODO)</div>
-        </div>
-      )}
-
-      {/* TODO: Implement RelatedPosts component */}
-      {relatedPosts && relatedPosts.length > 0 && (
-        <div className="mb-8">
-          <div className="text-sm text-stone-600">Related Posts (TODO)</div>
-        </div>
-      )}
-
-      {/* TODO: Implement SocialShare component */}
+    <footer className={cn('pt-8', className)}>
+      {/* TODO: Implement AuthorInfo */}
+      {/* TODO: Implement SocialShare with window.navigator.share */}
       <div className="mb-8">
         <div className="text-sm text-stone-600">Social Share (TODO)</div>
       </div>

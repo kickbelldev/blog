@@ -1,7 +1,14 @@
 import { notFound } from 'next/navigation'
 
-import { PostContent, PostFooter, PostHeader } from '@/app/posts/_components'
-import { getAllPosts } from '@/entities/posts'
+import {
+  PostContent,
+  PostFooter,
+  PostHeader,
+  PostNavigation,
+  RelatedPosts,
+} from '@/app/posts/_components'
+import { getAllPosts, getPostNavigation } from '@/entities/posts'
+import { getRelatedPostsByTags } from '@/entities/tags'
 
 export async function generateStaticParams() {
   const posts = await getAllPosts()
@@ -21,19 +28,32 @@ export default async function PostPage({
   }>
 }) {
   const { slug } = await params
+  const decodedSlug = decodeURIComponent(slug)
 
   try {
     const { default: Post, frontmatter } = await import(
-      `@/contents/${decodeURIComponent(slug)}.mdx`
+      `@/contents/${decodedSlug}.mdx`
     )
 
+    const { previousPost, nextPost } = await getPostNavigation(decodedSlug)
+    const relatedPosts = await getRelatedPostsByTags(decodedSlug)
+
     return (
-      <div className="container mx-auto px-5 py-8 max-w-4xl">
+      <div className="mx-auto px-5 py-8 max-w-4xl">
         <PostHeader {...frontmatter} />
         <PostContent>
           <Post />
         </PostContent>
-        <PostFooter />
+        <PostFooter
+          previousPost={previousPost}
+          nextPost={nextPost}
+          relatedPosts={relatedPosts}
+        />
+        <PostNavigation
+          previousPost={previousPost}
+          nextPost={nextPost}
+        />
+        <RelatedPosts posts={relatedPosts} />
       </div>
     )
   } catch (_error) {

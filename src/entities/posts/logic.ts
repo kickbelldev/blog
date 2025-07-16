@@ -1,3 +1,5 @@
+import { author } from '@/constants'
+
 import type { Post, PostGrayMatter } from './types'
 
 /**
@@ -15,6 +17,7 @@ export function parsePostData(parsed: PostGrayMatter, fileName: string): Post {
     content: parsed.content,
     data: parsed.data,
     slug: fileName.replace(/\.mdx$/, ''),
+    author: author,
   }
 }
 
@@ -32,4 +35,47 @@ export function sortPostsByDate(posts: Post[]): Post[] {
  */
 export function filterPostsByTag(posts: Post[], tag: string): Post[] {
   return posts.filter((post) => post.data.tags.includes(tag))
+}
+
+/**
+ * 현재 포스트를 기준으로 이전/다음 포스트를 찾습니다.
+ * 날짜 순으로 정렬된 포스트 목록에서 현재 포스트의 위치를 찾아 이전/다음 포스트를 반환합니다.
+ */
+export function findAdjacentPosts(
+  posts: Post[],
+  currentSlug: string
+): {
+  previousPost?: Pick<Post, 'slug' | 'data'>
+  nextPost?: Pick<Post, 'slug' | 'data'>
+} {
+  const sortedPosts = sortPostsByDate(posts)
+  const currentIndex = sortedPosts.findIndex(
+    (post) => post.slug === currentSlug
+  )
+
+  if (currentIndex === -1) {
+    return {}
+  }
+
+  const previousPost =
+    currentIndex > 0 ? sortedPosts[currentIndex - 1] : undefined
+  const nextPost =
+    currentIndex < sortedPosts.length - 1
+      ? sortedPosts[currentIndex + 1]
+      : undefined
+
+  return {
+    previousPost: previousPost
+      ? {
+          slug: previousPost.slug,
+          data: previousPost.data,
+        }
+      : undefined,
+    nextPost: nextPost
+      ? {
+          slug: nextPost.slug,
+          data: nextPost.data,
+        }
+      : undefined,
+  }
 }

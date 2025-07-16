@@ -27,5 +27,6 @@
   },
   "[tailwindcss]": {
     "editor.defaultFormatter": "biomejs.biome"
-  }
+  },
+  "biome.enabled": true
 }

@@ -21,7 +21,7 @@ export default function RootLayout({
       <body className={`${notoSansKR.className} antialiased`}>
         <div className="min-h-screen flex flex-col">
           <Header />
-          <main className="flex-1 container mx-auto px-5">{children}</main>
+          <main className="flex-1 container mx-auto">{children}</main>
           <Footer />
         </div>
       </body>

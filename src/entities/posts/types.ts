@@ -4,16 +4,15 @@ export type PostFrontMatter = {
   title: string
   date: string
   tags: Array<string>
-  description?: string
-  author?: string
-  readingTime?: number
-  featured?: boolean
+  description: string
 }
 
 export type Post = {
   slug: string
   content: string
+  author: string
   data: PostFrontMatter
+  readingTime?: number
 }
 
 export type PostGrayMatter = GrayMatterFile<string> & {

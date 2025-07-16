@@ -1,3 +1,5 @@
 export { PostContent } from './PostContent'
 export { PostFooter } from './PostFooter'
 export { PostHeader } from './PostHeader'
+export { PostNavigation } from './PostNavigation'
+export { RelatedPosts } from './RelatedPosts'

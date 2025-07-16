@@ -9,6 +9,7 @@ import {
   createTagClusters,
   createTagGraph,
   extractTagsFromPosts,
+  findRelatedPostsByTags,
   findTagByName,
 } from './logic'
 import type { TagEdgeAttributes, TagNodeAttributes } from './types'
@@ -18,8 +19,10 @@ describe('Tags Logic', () => {
     {
       slug: 'post1',
       content: 'Content 1',
+      author: 'John Doe',
       data: {
         title: 'Post 1',
+        description: 'React와 JavaScript를 활용한 웹 개발에 대한 글입니다.',
         date: '2025-01-01',
         tags: [
           'React',
@@ -31,8 +34,10 @@ describe('Tags Logic', () => {
     {
       slug: 'post2',
       content: 'Content 2',
+      author: 'Jane Smith',
       data: {
         title: 'Post 2',
+        description: 'TypeScript와 React를 함께 사용하는 방법을 다룹니다.',
         date: '2025-01-01',
         tags: [
           'React',
@@ -45,8 +50,10 @@ describe('Tags Logic', () => {
     {
       slug: 'post3',
       content: 'Content 3',
+      author: 'Bob Johnson',
       data: {
         title: 'Post 3',
+        description: '웹 개발의 기초와 JavaScript 활용법을 설명합니다.',
         date: '2025-01-01',
         tags: [
           'React',
@@ -58,8 +65,10 @@ describe('Tags Logic', () => {
     {
       slug: 'post4',
       content: 'Content 4',
+      author: 'Alice Brown',
       data: {
         title: 'Post 4',
+        description: 'React와 TypeScript를 이용한 현대적인 개발 방법론입니다.',
         date: '2025-01-02',
         tags: [
           'React',
@@ -70,8 +79,10 @@ describe('Tags Logic', () => {
     {
       slug: 'post5',
       content: 'Content 5',
+      author: 'Charlie Wilson',
       data: {
         title: 'Post 5',
+        description: 'Node.js와 JavaScript를 활용한 백엔드 개발 가이드입니다.',
         date: '2025-01-03',
         tags: [
           'JavaScript',
@@ -125,8 +136,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post1',
           content: 'Content 1',
+          author: 'Test Author',
           data: {
             title: 'Post 1',
+            description: '태그가 없는 포스트입니다.',
             date: '2025-01-01',
             tags: [],
           },
@@ -134,8 +147,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post2',
           content: 'Content 2',
+          author: 'Another Author',
           data: {
             title: 'Post 2',
+            description: 'React에 대한 기본적인 내용을 다룹니다.',
             date: '2025-01-02',
             tags: [
               'React',
@@ -166,8 +181,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post1',
           content: 'Content 1',
+          author: 'Test Author',
           data: {
             title: 'Post 1',
+            description: '태그가 정의되지 않은 포스트입니다.',
             date: '2025-01-01',
             tags: undefined as any, // Simulate undefined tags
           },
@@ -175,8 +192,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post2',
           content: 'Content 2',
+          author: 'Another Author',
           data: {
             title: 'Post 2',
+            description: 'React 개발에 대한 내용입니다.',
             date: '2025-01-02',
             tags: [
               'React',
@@ -273,8 +292,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post1',
           content: 'Content 1',
+          author: 'Single Author',
           data: {
             title: 'Post 1',
+            description: 'React에 대한 단일 태그 포스트입니다.',
             date: '2025-01-01',
             tags: [
               'React',
@@ -284,8 +305,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post2',
           content: 'Content 2',
+          author: 'Another Author',
           data: {
             title: 'Post 2',
+            description: 'Vue.js에 대한 내용을 다룹니다.',
             date: '2025-01-02',
             tags: [
               'Vue',
@@ -314,8 +337,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post1',
           content: 'Content 1',
+          author: 'Test Author',
           data: {
             title: 'Post 1',
+            description: '태그가 정의되지 않은 포스트입니다.',
             date: '2025-01-01',
             tags: undefined as any,
           },
@@ -323,8 +348,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post2',
           content: 'Content 2',
+          author: 'React Author',
           data: {
             title: 'Post 2',
+            description: 'React 개발 가이드입니다.',
             date: '2025-01-02',
             tags: [
               'React',
@@ -365,8 +392,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post1',
           content: 'Content 1',
+          author: 'Isolated Author',
           data: {
             title: 'Post 1',
+            description: '독립적인 React 포스트입니다.',
             date: '2025-01-01',
             tags: [
               'React',
@@ -417,8 +446,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post1',
           content: 'Content 1',
+          author: 'Single Tag Author',
           data: {
             title: 'Post 1',
+            description: '단일 태그를 가진 React 포스트입니다.',
             date: '2025-01-01',
             tags: [
               'React',
@@ -447,8 +478,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post1',
           content: 'Content 1',
+          author: 'Dev Author 1',
           data: {
             title: 'Post 1',
+            description: 'React와 JavaScript 기초를 다룹니다.',
             date: '2025-01-01',
             tags: [
               'React',
@@ -459,8 +492,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post2',
           content: 'Content 2',
+          author: 'Dev Author 2',
           data: {
             title: 'Post 2',
+            description: 'React와 TypeScript 조합에 대해 설명합니다.',
             date: '2025-01-02',
             tags: [
               'React',
@@ -471,8 +506,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post3',
           content: 'Content 3',
+          author: 'Dev Author 3',
           data: {
             title: 'Post 3',
+            description: 'React 테스팅 방법론을 소개합니다.',
             date: '2025-01-03',
             tags: [
               'React',
@@ -483,8 +520,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post4',
           content: 'Content 4',
+          author: 'Dev Author 4',
           data: {
             title: 'Post 4',
+            description: 'React 성능 최적화 기법을 다룹니다.',
             date: '2025-01-04',
             tags: [
               'React',
@@ -495,8 +534,10 @@ describe('Tags Logic', () => {
         {
           slug: 'post5',
           content: 'Content 5',
+          author: 'Vue Author',
           data: {
             title: 'Post 5',
+            description: 'Vue.js 프레임워크에 대한 소개입니다.',
             date: '2025-01-05',
             tags: [
               'Vue',
@@ -532,8 +573,10 @@ describe('Tags Logic', () => {
         (_, i) => ({
           slug: `post${i + 1}`,
           content: `Content ${i + 1}`,
+          author: `Author ${i + 1}`,
           data: {
             title: `Post ${i + 1}`,
+            description: `React와 JavaScript를 함께 다루는 포스트 ${i + 1}입니다.`,
             date: `2025-01-0${i + 1}`,
             tags: [
               'React',
@@ -622,6 +665,211 @@ describe('Tags Logic', () => {
         leastUsed: singleTag[0],
         average: 5,
       })
+    })
+  })
+
+  describe('findRelatedPostsByTags', () => {
+    const postsWithTags: Post[] = [
+      {
+        slug: 'react-basics',
+        content: 'React content',
+        author: 'Author 1',
+        data: {
+          title: 'React Basics',
+          date: '2025-01-01',
+          description: 'React basics description',
+          tags: [
+            'React',
+            'JavaScript',
+            'Frontend',
+          ],
+        },
+      },
+      {
+        slug: 'vue-intro',
+        content: 'Vue content',
+        author: 'Author 2',
+        data: {
+          title: 'Vue Introduction',
+          date: '2025-01-02',
+          description: 'Vue introduction description',
+          tags: [
+            'Vue',
+            'JavaScript',
+            'Frontend',
+          ],
+        },
+      },
+      {
+        slug: 'node-server',
+        content: 'Node content',
+        author: 'Author 3',
+        data: {
+          title: 'Node Server',
+          date: '2025-01-03',
+          description: 'Node server description',
+          tags: [
+            'Node.js',
+            'JavaScript',
+            'Backend',
+          ],
+        },
+      },
+      {
+        slug: 'python-django',
+        content: 'Django content',
+        author: 'Author 4',
+        data: {
+          title: 'Python Django',
+          date: '2025-01-04',
+          description: 'Django framework description',
+          tags: [
+            'Python',
+            'Django',
+            'Backend',
+          ],
+        },
+      },
+      {
+        slug: 'react-hooks',
+        content: 'React hooks content',
+        author: 'Author 5',
+        data: {
+          title: 'React Hooks',
+          date: '2025-01-05',
+          description: 'React hooks description',
+          tags: [
+            'React',
+            'JavaScript',
+            'Hooks',
+          ],
+        },
+      },
+    ]
+
+    it('should find related posts based on tag clusters', () => {
+      const result = findRelatedPostsByTags(postsWithTags, 'react-basics', 3)
+
+      expect(result.length).toBeGreaterThan(0)
+      expect(result.every((post) => post.slug !== 'react-basics')).toBe(true)
+    })
+
+    it('should return empty array for post without tags', () => {
+      const postWithoutTags: Post = {
+        slug: 'no-tags',
+        content: 'Content without tags',
+        author: 'Author',
+        data: {
+          title: 'No Tags Post',
+          date: '2025-01-01',
+          description: 'Description',
+          tags: [],
+        },
+      }
+
+      const result = findRelatedPostsByTags(
+        [
+          postWithoutTags,
+          ...postsWithTags,
+        ],
+        'no-tags',
+        3
+      )
+
+      expect(result).toHaveLength(0)
+    })
+
+    it('should return empty array for non-existent post', () => {
+      const result = findRelatedPostsByTags(postsWithTags, 'non-existent', 3)
+
+      expect(result).toHaveLength(0)
+    })
+
+    it('should respect the limit parameter', () => {
+      const result = findRelatedPostsByTags(postsWithTags, 'react-basics', 1)
+
+      expect(result.length).toBeLessThanOrEqual(1)
+    })
+
+    it('should not include current post in results', () => {
+      const result = findRelatedPostsByTags(postsWithTags, 'react-basics', 5)
+
+      expect(result.every((post) => post.slug !== 'react-basics')).toBe(true)
+    })
+
+    it('should handle empty posts array', () => {
+      const result = findRelatedPostsByTags([], 'react-basics', 3)
+
+      expect(result).toHaveLength(0)
+    })
+
+    it('should find posts in same cluster', () => {
+      // Create posts with strong clustering relationships
+      const clusterPosts: Post[] = [
+        {
+          slug: 'react-post-1',
+          content: 'React content 1',
+          author: 'Author 1',
+          data: {
+            title: 'React Post 1',
+            date: '2025-01-01',
+            description: 'React description 1',
+            tags: [
+              'React',
+              'JavaScript',
+            ],
+          },
+        },
+        {
+          slug: 'react-post-2',
+          content: 'React content 2',
+          author: 'Author 2',
+          data: {
+            title: 'React Post 2',
+            date: '2025-01-02',
+            description: 'React description 2',
+            tags: [
+              'React',
+              'JavaScript',
+            ],
+          },
+        },
+        {
+          slug: 'react-post-3',
+          content: 'React content 3',
+          author: 'Author 3',
+          data: {
+            title: 'React Post 3',
+            date: '2025-01-03',
+            description: 'React description 3',
+            tags: [
+              'React',
+              'JavaScript',
+            ],
+          },
+        },
+        {
+          slug: 'python-post',
+          content: 'Python content',
+          author: 'Author 4',
+          data: {
+            title: 'Python Post',
+            date: '2025-01-04',
+            description: 'Python description',
+            tags: [
+              'Python',
+            ],
+          },
+        },
+      ]
+
+      const result = findRelatedPostsByTags(clusterPosts, 'react-post-1', 3)
+
+      // Should find other React posts but not Python post
+      expect(result.length).toBeGreaterThan(0)
+      expect(result.every((post) => post.data.tags.includes('React'))).toBe(
+        true
+      )
     })
   })
 })

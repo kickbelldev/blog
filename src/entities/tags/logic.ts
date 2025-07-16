@@ -220,3 +220,81 @@ export function calculateTagStats(tags: Tag[]) {
     average: tags.length > 0 ? total / tags.length : 0,
   }
 }
+
+/**
+ * 현재 포스트와 관련된 포스트들을 태그 클러스터 기반으로 찾습니다.
+ * 현재 포스트의 태그들이 속한 클러스터를 찾고, 같은 클러스터의 다른 포스트들을 반환합니다.
+ */
+export function findRelatedPostsByTags(
+  posts: Post[],
+  currentSlug: string,
+  limit: number = 3
+): Array<Pick<Post, 'slug' | 'data'>> {
+  const currentPost = posts.find((post) => post.slug === currentSlug)
+  if (
+    !currentPost ||
+    !currentPost.data.tags ||
+    currentPost.data.tags.length === 0
+  ) {
+    return []
+  }
+
+  // 태그 정보 추출 및 그래프 생성
+  const tags = extractTagsFromPosts(posts)
+  const graph = createTagGraph(posts, tags)
+  const clusters = createTagClusters(graph)
+
+  const currentTags = currentPost.data.tags
+  const relatedPosts: Array<{
+    post: Post
+    clusterScore: number
+  }> = []
+
+  // 현재 포스트의 태그들이 속한 클러스터들을 찾기
+  const relevantClusters = clusters.filter((cluster) =>
+    cluster.tags.some((tag) => currentTags.includes(tag))
+  )
+
+  // 각 포스트에 대해 클러스터 기반 점수 계산
+  for (const post of posts) {
+    if (
+      post.slug === currentSlug ||
+      !post.data.tags ||
+      post.data.tags.length === 0
+    ) {
+      continue
+    }
+
+    const postTags = post.data.tags
+    let clusterScore = 0
+
+    // 각 관련 클러스터에 대해 점수 계산
+    for (const cluster of relevantClusters) {
+      const clusterTagsInPost = postTags.filter((tag) =>
+        cluster.tags.includes(tag)
+      )
+      if (clusterTagsInPost.length > 0) {
+        // 클러스터 중심성과 공통 태그 수를 고려한 점수
+        const clusterContribution =
+          (clusterTagsInPost.length / cluster.tags.length) * cluster.centrality
+        clusterScore += clusterContribution
+      }
+    }
+
+    if (clusterScore > 0) {
+      relatedPosts.push({
+        post,
+        clusterScore,
+      })
+    }
+  }
+
+  // 클러스터 점수 기준으로 정렬하고 상위 limit개만 반환
+  return relatedPosts
+    .sort((a, b) => b.clusterScore - a.clusterScore)
+    .slice(0, limit)
+    .map(({ post }) => ({
+      slug: post.slug,
+      data: post.data,
+    }))
+}

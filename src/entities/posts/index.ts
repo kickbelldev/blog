@@ -2,7 +2,12 @@ import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import matter from 'gray-matter'
 
-import { filterMdxFiles, parsePostData, sortPostsByDate } from './logic'
+import {
+  filterMdxFiles,
+  findAdjacentPosts,
+  parsePostData,
+  sortPostsByDate,
+} from './logic'
 import type { Post, PostGrayMatter } from './types'
 
 const postsDirectory = join(process.cwd(), 'src', 'contents')
@@ -19,6 +24,8 @@ export async function getPostByFileName(fileName: string) {
   return parsePostData(parsed, fileName)
 }
 
+const allPosts = await getAllPosts()
+
 export async function getAllPosts() {
   const fileNames = await getPostFileNames()
   const postPromises = fileNames.map((fileName) => getPostByFileName(fileName))
@@ -27,6 +34,11 @@ export async function getAllPosts() {
 }
 
 export async function getPostsByTag(tag: string): Promise<Post[]> {
-  const allPosts = await getAllPosts()
   return allPosts.filter((post) => post.data.tags.includes(tag))
 }
+
+export async function getPostNavigation(currentSlug: string) {
+  return findAdjacentPosts(allPosts, currentSlug)
+}
+
+export default allPosts
