@@ -9,10 +9,12 @@
   "files": {
     "ignoreUnknown": false,
     "includes": [
-      "**/*",
-      "!.next",
       "!node_modules",
-      "!public"
+      "!public",
+      "!.*",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.json"
     ]
   },
   "formatter": {
