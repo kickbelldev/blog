@@ -7,7 +7,7 @@ export const notoSansKR = Noto_Sans_KR({
     'latin',
   ],
   weight: [
-    '300',
-    '600',
+    '400',
+    '700',
   ],
 })

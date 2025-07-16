@@ -129,6 +129,10 @@
     scrollbar-color: theme(colors.stone.400) theme(colors.stone.100);
   }
 
+  .prose pre [data-line] {
+    padding-inline-end: 1.5rem;
+  }
+
   .dark .prose pre {
     scrollbar-color: theme(colors.stone.600) theme(colors.stone.800);
   }
