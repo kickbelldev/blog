@@ -119,3 +119,49 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  /* Enhanced code block styling for better mobile experience */
+  .prose pre {
+    /* Ensure proper scrolling on mobile */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: theme(colors.stone.400) theme(colors.stone.100);
+  }
+
+  .dark .prose pre {
+    scrollbar-color: theme(colors.stone.600) theme(colors.stone.800);
+  }
+
+  /* Custom scrollbar for webkit browsers */
+  .prose pre::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+
+  .prose pre::-webkit-scrollbar-track {
+    background: theme(colors.stone.100);
+    border-radius: 4px;
+  }
+
+  .prose pre::-webkit-scrollbar-thumb {
+    background: theme(colors.stone.400);
+    border-radius: 4px;
+  }
+
+  .prose pre::-webkit-scrollbar-thumb:hover {
+    background: theme(colors.stone.500);
+  }
+
+  .dark .prose pre::-webkit-scrollbar-track {
+    background: theme(colors.stone.800);
+  }
+
+  .dark .prose pre::-webkit-scrollbar-thumb {
+    background: theme(colors.stone.600);
+  }
+
+  .dark .prose pre::-webkit-scrollbar-thumb:hover {
+    background: theme(colors.stone.500);
+  }
+}
