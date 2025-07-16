@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 
-import { PostContent } from '@/app/posts/_components'
+import { PostContent, PostFooter, PostHeader } from '@/app/posts/_components'
 import { getAllPosts } from '@/entities/posts'
 
 export async function generateStaticParams() {
@@ -23,15 +23,17 @@ export default async function PostPage({
   const { slug } = await params
 
   try {
-    const { default: Post } = await import(
+    const { default: Post, frontmatter } = await import(
       `@/contents/${decodeURIComponent(slug)}.mdx`
     )
 
     return (
       <div className="container mx-auto px-5 py-8 max-w-4xl">
+        <PostHeader {...frontmatter} />
         <PostContent>
           <Post />
         </PostContent>
+        <PostFooter />
       </div>
     )
   } catch (_error) {

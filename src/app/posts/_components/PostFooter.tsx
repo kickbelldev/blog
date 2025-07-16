@@ -36,15 +36,6 @@ export function PostFooter({
       <div className="mb-8">
         <div className="text-sm text-stone-600">Social Share (TODO)</div>
       </div>
-
-      {/* TODO: Implement AuthorInfo component */}
-      {author && (
-        <div className="mb-8">
-          <div className="text-sm text-stone-600">
-            Author Info: {author} (TODO)
-          </div>
-        </div>
-      )}
     </footer>
   )
 }
