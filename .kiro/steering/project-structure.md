@@ -67,38 +67,6 @@ src/
 - **스타일**: "new-york" 스타일, stone 베이스 컬러
 - **아이콘**: Lucide React 사용
 
-## 개발 워크플로우
-
-### 브랜치 전략
-- `main`: 프로덕션 준비 코드
-- `feat/`: 새 기능 (`feat/search-functionality`)
-- `fix/`: 버그 수정 (`fix/mobile-nav-issue`)
-- `docs/`: 문서 업데이트
-
-### 커밋 컨벤션
-```
-<type>: <description>
-
-[optional body]
-```
-
-#### 커밋 전략
-
-논리적 단위로 나누어서 커밋
-
-**타입:**
-- `feat:` - 새 기능
-- `fix:` - 버그 수정
-- `docs:` - 문서 업데이트
-- `config:` - 설정 변경
-- `refactor:` - 리팩토링
-- `chore:` - 유지보수
-
-### 코드 품질
-- **Biome**: `pnpm biome:fix` 실행 후 커밋
-- **테스트**: `pnpm test` 실행
-- **빌드 확인**: 필요시에만 `pnpm build` 실행
-
 ## 콘텐츠 관리
 
 ### 콘텐츠 위치
@@ -115,28 +83,6 @@ tags: ['tag1', 'tag2']
 
 # 포스트 내용
 ```
-
-### 정적 생성
-- `generateStaticParams()`로 빌드 타임 페이지 생성
-- `output: 'export'` 설정으로 정적 파일 생성
-
-## 개발 시 주의사항
-
-### UI 구현
-- **플레이스홀더 사용**: 실제 콘텐츠 대신 `[Page Title]`, `[Description]` 등 사용
-- **사용자 승인**: UI 구조 구현 전 명시적 요구사항 확인
-- **점진적 구현**: 한 번에 모든 기능 구현하지 않기
-
-### 성능 최적화
-- 이미지 최적화: Next.js Image 컴포넌트 사용
-- 코드 분할: 동적 import 활용
-- 정적 생성: 가능한 모든 페이지 사전 생성
-
-### 접근성
-- 시맨틱 HTML 사용
-- ARIA 레이블 적절히 활용
-- 키보드 네비게이션 지원
-- 색상 대비 준수
 
 ## 배포 설정
 
