@@ -3,6 +3,8 @@ import type { NextConfig } from 'next'
 import rehypePrettyCode, { type Options } from 'rehype-pretty-code'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
+import remarkReadingTime from 'remark-reading-time'
+import remarkMdxTime from 'remark-reading-time/mdx'
 
 const nextConfig: NextConfig = {
   basePath: '/blog',
@@ -23,6 +25,8 @@ const withMDX = createMDX({
     remarkPlugins: [
       remarkFrontmatter,
       remarkMdxFrontmatter,
+      remarkReadingTime,
+      remarkMdxTime,
     ],
     rehypePlugins: [
       [

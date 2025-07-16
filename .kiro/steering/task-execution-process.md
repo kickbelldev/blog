@@ -32,7 +32,6 @@
 - **커스텀훅**: 로직은 커스텀훅으로 분리함
 - **컴포넌트 분리**: 50줄 이상의 컴포넌트는 분리 고려
 
-### 컴포넌트 구현
 ```typescript
 // 1. 인터페이스 정의
 interface ComponentProps {
@@ -52,6 +51,9 @@ export function Component({
 ```
 
 ### 비즈니스 로직 구현
+
+- ESM 모듈 시스템을 활용해 적절히 인터페이스 노출
+
 ```typescript
 // 1. 타입 정의
 export type DataType = {
@@ -71,6 +73,9 @@ describe('processData', () => {
   })
 })
 ```
+
+### Next.js 아키텍처 준수
+- App Router의 이점과 서버 컴포넌트를 적극 활용
 
 ### 기능 구조 우선
 - 스타일링보다 기능적 구조와 로직에 집중
