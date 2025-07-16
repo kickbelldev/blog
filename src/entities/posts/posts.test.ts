@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   filterMdxFiles,
   filterPostsByTag,
+  findAdjacentPosts,
   parsePostData,
   sortPostsByDate,
 } from './logic'
@@ -52,6 +53,7 @@ describe('Posts Logic - Business Logic Tests', () => {
         data: {
           title: 'Test Post',
           date: '2025-01-01',
+          description: 'Test Description',
           tags: [
             'test',
             'example',
@@ -69,9 +71,11 @@ describe('Posts Logic - Business Logic Tests', () => {
       expect(result).toEqual({
         slug: 'test-post',
         content: '# Test Content\n\nThis is a test post.',
+        author: 'Kayce Kim',
         data: {
           title: 'Test Post',
           date: '2025-01-01',
+          description: 'Test Description',
           tags: [
             'test',
             'example',
@@ -86,6 +90,7 @@ describe('Posts Logic - Business Logic Tests', () => {
         data: {
           title: 'Title',
           date: '2025-01-01',
+          description: 'description',
           tags: [],
         },
         excerpt: '',
@@ -106,6 +111,7 @@ describe('Posts Logic - Business Logic Tests', () => {
         data: {
           title: '',
           date: '',
+          description: '',
           tags: [],
         },
         excerpt: '',
@@ -120,9 +126,11 @@ describe('Posts Logic - Business Logic Tests', () => {
       expect(result).toEqual({
         slug: 'empty',
         content: '',
+        author: 'Kayce Kim',
         data: {
           title: '',
           date: '',
+          description: '',
           tags: [],
         },
       })
@@ -135,27 +143,33 @@ describe('Posts Logic - Business Logic Tests', () => {
         {
           slug: 'old-post',
           content: 'Old content',
+          author: 'Old Author',
           data: {
             title: 'Old Post',
             date: '2025-01-01',
+            description: '',
             tags: [],
           },
         },
         {
           slug: 'new-post',
           content: 'New content',
+          author: 'New Author',
           data: {
             title: 'New Post',
             date: '2025-01-03',
+            description: '',
             tags: [],
           },
         },
         {
           slug: 'middle-post',
           content: 'Middle content',
+          author: 'Middle Author',
           data: {
             title: 'Middle Post',
             date: '2025-01-02',
+            description: '',
             tags: [],
           },
         },
@@ -173,18 +187,22 @@ describe('Posts Logic - Business Logic Tests', () => {
         {
           slug: 'post-a',
           content: 'Content A',
+          author: 'Author A',
           data: {
             title: 'Post A',
             date: '2025-01-01',
+            description: 'Description A',
             tags: [],
           },
         },
         {
           slug: 'post-b',
           content: 'Content B',
+          author: 'Author B',
           data: {
             title: 'Post B',
             date: '2025-01-01',
+            description: 'Description B',
             tags: [],
           },
         },
@@ -205,18 +223,22 @@ describe('Posts Logic - Business Logic Tests', () => {
         {
           slug: 'invalid-date',
           content: 'Content 1',
+          author: 'Author 1',
           data: {
             title: 'Post 1',
             date: 'invalid-date',
+            description: 'Description 1',
             tags: [],
           },
         },
         {
           slug: 'valid-date',
           content: 'Content 2',
+          author: 'Author 2',
           data: {
             title: 'Post 2',
             date: '2025-01-01',
+            description: 'Description 2',
             tags: [],
           },
         },
@@ -241,9 +263,11 @@ describe('Posts Logic - Business Logic Tests', () => {
       {
         slug: 'react-post',
         content: 'React content',
+        author: 'React Author',
         data: {
           title: 'React Post',
           date: '2025-01-01',
+          description: 'React Description',
           tags: [
             'React',
             'JavaScript',
@@ -253,9 +277,11 @@ describe('Posts Logic - Business Logic Tests', () => {
       {
         slug: 'vue-post',
         content: 'Vue content',
+        author: 'Vue Author',
         data: {
           title: 'Vue Post',
           date: '2025-01-02',
+          description: 'Vue Description',
           tags: [
             'Vue',
             'JavaScript',
@@ -265,9 +291,11 @@ describe('Posts Logic - Business Logic Tests', () => {
       {
         slug: 'python-post',
         content: 'Python content',
+        author: 'Python Author',
         data: {
           title: 'Python Post',
           date: '2025-01-03',
+          description: 'Python Description',
           tags: [
             'Python',
           ],
@@ -295,6 +323,97 @@ describe('Posts Logic - Business Logic Tests', () => {
       const result = filterPostsByTag([], 'React')
 
       expect(result).toEqual([])
+    })
+  })
+
+  describe('findAdjacentPosts', () => {
+    const posts: Post[] = [
+      {
+        slug: 'post-1',
+        content: 'Content 1',
+        author: 'Author 1',
+        data: {
+          title: 'Post 1',
+          date: '2025-01-01',
+          description: 'Description 1',
+          tags: [
+            'tag1',
+          ],
+        },
+      },
+      {
+        slug: 'post-2',
+        content: 'Content 2',
+        author: 'Author 2',
+        data: {
+          title: 'Post 2',
+          date: '2025-01-02',
+          description: 'Description 2',
+          tags: [
+            'tag2',
+          ],
+        },
+      },
+      {
+        slug: 'post-3',
+        content: 'Content 3',
+        author: 'Author 3',
+        data: {
+          title: 'Post 3',
+          date: '2025-01-03',
+          description: 'Description 3',
+          tags: [
+            'tag3',
+          ],
+        },
+      },
+    ]
+
+    it('should return previous and next posts for middle post', () => {
+      const result = findAdjacentPosts(posts, 'post-2')
+
+      expect(result.previousPost?.slug).toBe('post-3')
+      expect(result.previousPost?.data.title).toBe('Post 3')
+      expect(result.nextPost?.slug).toBe('post-1')
+      expect(result.nextPost?.data.title).toBe('Post 1')
+    })
+
+    it('should return only next post for newest post', () => {
+      const result = findAdjacentPosts(posts, 'post-3')
+
+      expect(result.previousPost).toBeUndefined()
+      expect(result.nextPost?.slug).toBe('post-2')
+      expect(result.nextPost?.data.title).toBe('Post 2')
+    })
+
+    it('should return only previous post for oldest post', () => {
+      const result = findAdjacentPosts(posts, 'post-1')
+
+      expect(result.previousPost?.slug).toBe('post-2')
+      expect(result.previousPost?.data.title).toBe('Post 2')
+      expect(result.nextPost).toBeUndefined()
+    })
+
+    it('should return empty object for non-existent post', () => {
+      const result = findAdjacentPosts(posts, 'non-existent')
+
+      expect(result).toEqual({})
+    })
+
+    it('should handle single post', () => {
+      const singlePost = [
+        posts[0],
+      ]
+      const result = findAdjacentPosts(singlePost, 'post-1')
+
+      expect(result.previousPost).toBeUndefined()
+      expect(result.nextPost).toBeUndefined()
+    })
+
+    it('should handle empty posts array', () => {
+      const result = findAdjacentPosts([], 'post-1')
+
+      expect(result).toEqual({})
     })
   })
 })
