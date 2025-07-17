@@ -13,7 +13,7 @@ export function RelatedPostItem({
   return (
     <Link
       key={post.slug}
-      href={`/posts/${post.slug}`}
+      href={`/${post.data.category || 'uncategorized'}/${post.slug}`}
       className="block w-full max-w-sm"
     >
       <div className="border rounded-lg p-4 h-full duration-200">

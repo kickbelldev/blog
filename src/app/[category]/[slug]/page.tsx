@@ -6,16 +6,20 @@ import {
   PostHeader,
   PostNavigation,
   RelatedPosts,
-} from '@/app/posts/_components'
+} from '@/app/[category]/_components'
+import { type CategoryId, isValidCategoryId } from '@/entities/categories'
 import { getAllPosts, getPostNavigation } from '@/entities/posts'
 import { getRelatedPostsByTags } from '@/entities/tags'
 
 export async function generateStaticParams() {
   const posts = await getAllPosts()
 
-  const params = posts.map((post) => ({
-    slug: encodeURIComponent(post.slug),
-  }))
+  const params = posts
+    .filter((post) => post.data.category) // 카테고리가 있는 포스트만
+    .map((post) => ({
+      category: post.data.category as CategoryId,
+      slug: encodeURIComponent(post.slug),
+    }))
 
   return params
 }
@@ -24,16 +28,28 @@ export default async function PostPage({
   params,
 }: {
   params: Promise<{
+    category: string
     slug: string
   }>
 }) {
-  const { slug } = await params
+  const { category, slug } = await params
   const decodedSlug = decodeURIComponent(slug)
 
+  // 카테고리 유효성 검증
+  if (!isValidCategoryId(category)) {
+    notFound()
+  }
+
   try {
+    // 카테고리 기반 경로로 MDX 파일 import
     const { default: Post, frontmatter } = await import(
-      `@/contents/${decodedSlug}.mdx`
+      `@/contents/${category}/${decodedSlug}`
     )
+
+    // 포스트의 실제 카테고리와 URL 카테고리가 일치하는지 확인
+    if (frontmatter.category && frontmatter.category !== category) {
+      notFound()
+    }
 
     const { previousPost, nextPost } = await getPostNavigation(decodedSlug)
     const relatedPosts = await getRelatedPostsByTags(decodedSlug)
@@ -44,11 +60,7 @@ export default async function PostPage({
         <PostContent>
           <Post />
         </PostContent>
-        <PostFooter
-          previousPost={previousPost}
-          nextPost={nextPost}
-          relatedPosts={relatedPosts}
-        />
+        <PostFooter />
         <PostNavigation
           previousPost={previousPost}
           nextPost={nextPost}

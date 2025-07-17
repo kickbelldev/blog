@@ -28,7 +28,7 @@ export function PostNavigation({
       <div className="flex-1 max-w-[calc(50%-0.5rem)]">
         {previousPost && (
           <Link
-            href={`/posts/${previousPost.slug}`}
+            href={`/${previousPost.data.category || 'uncategorized'}/${previousPost.slug}`}
             className={cn(
               'flex items-center gap-2 p-3 rounded-lg w-full',
               'transition-colors duration-200',
@@ -61,7 +61,7 @@ export function PostNavigation({
       <div className="flex-1 flex justify-end max-w-[calc(50%-0.5rem)]">
         {nextPost && (
           <Link
-            href={`/posts/${nextPost.slug}`}
+            href={`/${nextPost.data.category || 'uncategorized'}/${nextPost.slug}`}
             className={cn(
               'flex items-center gap-2 p-3 rounded-lg text-right w-full',
               'transition-colors duration-200',
