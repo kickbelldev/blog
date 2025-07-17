@@ -7,6 +7,7 @@ import {
   createTagGraph,
   extractTagsFromPosts,
   findRelatedPostsByTags,
+  findRelatedPostsByTagsOptimized,
   findTagByName,
 } from './logic'
 import type { Tag, TagCluster, TagRelationship } from './types'
@@ -27,27 +28,28 @@ export async function getTagByName(name: string): Promise<Tag | null> {
   return findTagByName(tags, name)
 }
 
+// 태그 그래프를 모듈 레벨에서 캐시
+const tagGraph = createTagGraph(posts, tags)
+
 /**
  * 태그 그래프를 생성합니다.
  */
-export async function getTagGraph() {
-  return createTagGraph(posts, tags)
+export function getTagGraph() {
+  return tagGraph
 }
 
 /**
  * 태그 간의 관계를 분석합니다.
  */
-export async function getTagRelationships(): Promise<TagRelationship[]> {
-  const graph = await getTagGraph()
-  return analyzeTagRelationships(graph)
+export function getTagRelationships(): TagRelationship[] {
+  return analyzeTagRelationships(tagGraph)
 }
 
 /**
  * 태그 클러스터를 생성합니다.
  */
-export async function getTagClusters(): Promise<TagCluster[]> {
-  const graph = await getTagGraph()
-  return createTagClusters(graph)
+export function getTagClusters(): TagCluster[] {
+  return createTagClusters(tagGraph)
 }
 
 /**
@@ -58,12 +60,12 @@ export async function getTagStats() {
   return calculateTagStats(tags)
 }
 
+// 태그 클러스터를 모듈 레벨에서 캐시
+const tagClusters = createTagClusters(tagGraph)
+
 /**
  * 현재 포스트와 태그 기반으로 관련된 포스트들을 찾습니다.
  */
-export async function getRelatedPostsByTags(
-  currentSlug: string,
-  limit: number = 3
-) {
-  return findRelatedPostsByTags(posts, currentSlug, limit)
+export function getRelatedPostsByTags(currentSlug: string, limit: number = 3) {
+  return findRelatedPostsByTagsOptimized(posts, currentSlug, tagClusters, limit)
 }

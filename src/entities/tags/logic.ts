@@ -244,6 +244,27 @@ export function findRelatedPostsByTags(
   const graph = createTagGraph(posts, tags)
   const clusters = createTagClusters(graph)
 
+  return findRelatedPostsByTagsOptimized(posts, currentSlug, clusters, limit)
+}
+
+/**
+ * 최적화된 관련 포스트 찾기 함수 (미리 계산된 클러스터 사용)
+ */
+export function findRelatedPostsByTagsOptimized(
+  posts: Post[],
+  currentSlug: string,
+  clusters: TagCluster[],
+  limit: number = 3
+): Array<Pick<Post, 'slug' | 'data'>> {
+  const currentPost = posts.find((post) => post.slug === currentSlug)
+  if (
+    !currentPost ||
+    !currentPost.data.tags ||
+    currentPost.data.tags.length === 0
+  ) {
+    return []
+  }
+
   const currentTags = currentPost.data.tags
   const relatedPosts: Array<{
     post: Post
