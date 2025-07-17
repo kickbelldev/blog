@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { formatDate } from '@/app/_lib/formatDate'
-import type { Post } from '@/entities/posts/types'
+import type { Post } from '@/entities/blog'
 
 import { TagList } from './TagList'
 
@@ -13,7 +13,7 @@ export function RelatedPostItem({
   return (
     <Link
       key={post.slug}
-      href={`/posts/${post.slug}`}
+      href={`/${post.data.category || 'uncategorized'}/${post.slug}`}
       className="block w-full max-w-sm"
     >
       <div className="border rounded-lg p-4 h-full duration-200">

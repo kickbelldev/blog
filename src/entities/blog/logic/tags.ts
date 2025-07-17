@@ -1,17 +1,17 @@
 import { UndirectedGraph } from 'graphology'
 
-import type { Post } from '../posts/types'
-
 import type {
+  Post,
   Tag,
   TagCluster,
   TagEdgeAttributes,
+  TagGraph,
   TagNodeAttributes,
   TagRelationship,
-} from './types'
+} from '../types'
 
 /**
- * 포스트 목록에서 모든 태그를 추출하고 개수를 계산합니다.
+ * 포스트 목록에서 모든 태그 추출 및 개수 계산
  */
 export function extractTagsFromPosts(posts: Post[]): Tag[] {
   const tagMap: Record<string, Tag> = {}
@@ -40,19 +40,16 @@ export function extractTagsFromPosts(posts: Post[]): Tag[] {
 }
 
 /**
- * 특정 이름의 태그를 찾습니다.
+ * 특정 이름의 태그 찾기
  */
 export function findTagByName(tags: Tag[], name: string): Tag | null {
   return tags.find((tag) => tag.name === name) || null
 }
 
 /**
- * 포스트 목록으로부터 태그 그래프를 생성합니다.
+ * 포스트 목록으로부터 태그 그래프 생성
  */
-export function createTagGraph(
-  posts: Post[],
-  tags: Tag[]
-): UndirectedGraph<TagNodeAttributes, TagEdgeAttributes> {
+export function createTagGraph(posts: Post[], tags: Tag[]): TagGraph {
   const graph = new UndirectedGraph<TagNodeAttributes, TagEdgeAttributes>()
 
   // 노드 추가
@@ -104,11 +101,9 @@ export function createTagGraph(
 }
 
 /**
- * 그래프로부터 태그 간의 관계를 분석합니다.
+ * 그래프로부터 태그 간의 관계를 분석
  */
-export function analyzeTagRelationships(
-  graph: UndirectedGraph<TagNodeAttributes, TagEdgeAttributes>
-): TagRelationship[] {
+export function analyzeTagRelationships(graph: TagGraph): TagRelationship[] {
   const relationships: TagRelationship[] = []
 
   graph.forEachNode((node) => {
@@ -140,11 +135,9 @@ export function analyzeTagRelationships(
 }
 
 /**
- * 그래프로부터 태그 클러스터를 생성합니다.
+ * 그래프로부터 태그 클러스터를 생성
  */
-export function createTagClusters(
-  graph: UndirectedGraph<TagNodeAttributes, TagEdgeAttributes>
-): TagCluster[] {
+export function createTagClusters(graph: TagGraph): TagCluster[] {
   const clusters: TagCluster[] = []
   const processed = new Set<string>()
 
@@ -207,7 +200,7 @@ export function createTagClusters(
 }
 
 /**
- * 태그 통계를 계산합니다.
+ * 태그 통계 계산
  */
 export function calculateTagStats(tags: Tag[]) {
   const total = tags.reduce((sum, tag) => sum + tag.count, 0)
@@ -222,12 +215,12 @@ export function calculateTagStats(tags: Tag[]) {
 }
 
 /**
- * 현재 포스트와 관련된 포스트들을 태그 클러스터 기반으로 찾습니다.
- * 현재 포스트의 태그들이 속한 클러스터를 찾고, 같은 클러스터의 다른 포스트들을 반환합니다.
+ * 최적화된 관련 포스트 찾기 함수 (미리 계산된 클러스터 사용)
  */
-export function findRelatedPostsByTags(
+export function findRelatedPostsByTagsOptimized(
   posts: Post[],
   currentSlug: string,
+  clusters: TagCluster[],
   limit: number = 3
 ): Array<Pick<Post, 'slug' | 'data'>> {
   const currentPost = posts.find((post) => post.slug === currentSlug)
@@ -238,11 +231,6 @@ export function findRelatedPostsByTags(
   ) {
     return []
   }
-
-  // 태그 정보 추출 및 그래프 생성
-  const tags = extractTagsFromPosts(posts)
-  const graph = createTagGraph(posts, tags)
-  const clusters = createTagClusters(graph)
 
   const currentTags = currentPost.data.tags
   const relatedPosts: Array<{

@@ -13,6 +13,7 @@ Next.js 15 기반의 정적 블로그 애플리케이션으로, MDX를 사용한
 - **코드 품질**: Biome (formatting/linting)
 - **테스팅**: Vitest
 - **패키지 매니저**: pnpm
+- **그래프**: graphology
 
 ## 디렉토리 구조
 

@@ -1,6 +1,6 @@
-# CLAUDE.md
+# GEMINI.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Gemini when working with code in this repository.
 
 ## 프로젝트 개요
 
@@ -223,6 +223,7 @@ describe('processData', () => {
   aria-expanded={isExpanded}
   className="focus:outline-none focus:ring-2 focus:ring-stone-500"
 >
+</button>
 ```
 
 ## 문서화
@@ -247,9 +248,9 @@ describe('processData', () => {
 
 [optional body]
 
-🤖 Generated with [Claude Code](https://claude.ai/code)
+🤖 Generated with Gemini
 
-Co-Authored-By: Claude <noreply@anthropic.com>
+Co-Authored-By: Gemini <gemini@google.com>
 ```
 
 **타입:**
@@ -279,9 +280,9 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - When implementing new pages or components, use placeholders instead of actual content. Show what type of content should go in each position rather than writing fake content.
 - Do NOT create UI structures arbitrarily. Always ask the user for specific requirements and approval before implementing any UI design or structure.
 
-## Claude Code Workflow Instructions
+## Gemini Workflow Instructions
 
-**IMPORTANT**: Claude Code must follow this PR-based workflow for ALL development tasks:
+**IMPORTANT**: Gemini must follow this PR-based workflow for ALL development tasks:
 
 ### 1. Before Starting Any Task
 ```bash
@@ -316,7 +317,7 @@ gh pr create --title "PR Title" --body "$(cat <<'EOF'
 - [ ] Checklist item 1
 - [ ] Checklist item 2
 
-🤖 Generated with [Claude Code](https://claude.ai/code)
+🤖 Generated with Gemini
 EOF
 )"
 ```
