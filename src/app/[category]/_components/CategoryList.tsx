@@ -2,7 +2,7 @@ import { cn } from '@/app/_lib/cn'
 import {
   categories as allCategories,
   type CategoryWithCount,
-} from '@/entities/blog'
+} from '@/domain/blog'
 
 import { CategoryBadge } from './CategoryBadge'
 

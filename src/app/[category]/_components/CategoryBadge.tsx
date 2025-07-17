@@ -1,5 +1,5 @@
 import { cn } from '@/app/_lib/cn'
-import { type CategoryId, getCategoryById } from '@/entities/blog'
+import { type CategoryId, getCategoryById } from '@/domain/blog'
 
 interface CategoryBadgeProps {
   categoryId: CategoryId

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import {
@@ -5,7 +6,7 @@ import {
   getCategoryById,
   getPostsByCategory,
   isValidCategoryId,
-} from '@/entities/blog'
+} from '@/domain/blog'
 
 import { CategoryBadge } from './_components/CategoryBadge'
 
@@ -73,12 +74,12 @@ export default async function CategoryPage({
                 </time>
               </div>
               <h2 className="text-xl font-semibold text-stone-900 dark:text-stone-100 mb-2">
-                <a
+                <Link
                   href={`/${post.data.category || category}/${post.slug}`}
                   className="hover:text-stone-600 dark:hover:text-stone-300 transition-colors"
                 >
                   {post.data.title}
-                </a>
+                </Link>
               </h2>
               <p className="text-stone-600 dark:text-stone-400 mb-3">
                 {post.data.description}

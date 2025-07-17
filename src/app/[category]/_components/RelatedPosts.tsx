@@ -1,5 +1,5 @@
 import { cn } from '@/app/_lib/cn'
-import type { Post } from '@/entities/blog'
+import type { Post } from '@/domain/blog'
 
 import { RelatedPostItem } from './RelatedPostItem'
 
