@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  extractCategoryFromPath,
   filterMdxFiles,
   filterPostsByTag,
   findAdjacentPosts,
@@ -323,6 +324,122 @@ describe('Posts Logic - Business Logic Tests', () => {
       const result = filterPostsByTag([], 'React')
 
       expect(result).toEqual([])
+    })
+  })
+
+  describe('extractCategoryFromPath', () => {
+    it('should extract dev category from path', () => {
+      const path = '/home/user/project/src/contents/dev/post.mdx'
+      const result = extractCategoryFromPath(path)
+      expect(result).toBe('dev')
+    })
+
+    it('should extract life category from path', () => {
+      const path = '/home/user/project/src/contents/life/post.mdx'
+      const result = extractCategoryFromPath(path)
+      expect(result).toBe('life')
+    })
+
+    it('should return undefined for root contents directory', () => {
+      const path = '/home/user/project/src/contents/post.mdx'
+      const result = extractCategoryFromPath(path)
+      expect(result).toBeUndefined()
+    })
+
+    it('should return undefined for invalid category', () => {
+      const path = '/home/user/project/src/contents/invalid/post.mdx'
+      const result = extractCategoryFromPath(path)
+      expect(result).toBeUndefined()
+    })
+
+    it('should return undefined for path without contents directory', () => {
+      const path = '/home/user/project/src/other/dev/post.mdx'
+      const result = extractCategoryFromPath(path)
+      expect(result).toBeUndefined()
+    })
+  })
+
+  describe('parsePostData', () => {
+    it('should parse post data with category from frontmatter', () => {
+      const mockParsed: PostGrayMatter = {
+        content: 'Post content',
+        data: {
+          title: 'Test Post',
+          date: '2025-01-01',
+          tags: [
+            'test',
+          ],
+          description: 'Test description',
+          category: 'dev',
+        },
+        excerpt: '',
+        orig: '',
+        language: '',
+        matter: '',
+        stringify: () => '',
+      }
+
+      const result = parsePostData(mockParsed, 'test.mdx')
+
+      expect(result.data.category).toBe('dev')
+      expect(result.slug).toBe('test')
+    })
+
+    it('should infer category from file path when not in frontmatter', () => {
+      const mockParsed: PostGrayMatter = {
+        content: 'Post content',
+        data: {
+          title: 'Test Post',
+          date: '2025-01-01',
+          tags: [
+            'test',
+          ],
+          description: 'Test description',
+        },
+        excerpt: '',
+        orig: '',
+        language: '',
+        matter: '',
+        stringify: () => '',
+      }
+
+      const result = parsePostData(
+        mockParsed,
+        'test.mdx',
+        '/project/src/contents/life/test.mdx'
+      )
+
+      expect(result.data.category).toBe('life')
+      expect(result.slug).toBe('test')
+    })
+
+    it('should prefer frontmatter category over path category', () => {
+      const mockParsed: PostGrayMatter = {
+        content: 'Post content',
+        data: {
+          title: 'Test Post',
+          date: '2025-01-01',
+          tags: [
+            'test',
+          ],
+          description: 'Test description',
+          category: 'dev',
+        },
+        excerpt: '',
+        orig: '',
+        language: '',
+        matter: '',
+        stringify: () => '',
+      }
+
+      const result = parsePostData(
+        mockParsed,
+        'test.mdx',
+        '/project/src/contents/life/test.mdx'
+      )
+
+      expect(result.data.category).toBe('dev')
+      expect(result.slug).toBe('test')
     })
   })
 

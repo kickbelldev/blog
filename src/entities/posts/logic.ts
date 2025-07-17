@@ -12,13 +12,47 @@ export function filterMdxFiles(files: string[]): string[] {
 /**
  * 파싱된 데이터를 Post 객체로 변환합니다.
  */
-export function parsePostData(parsed: PostGrayMatter, fileName: string): Post {
+export function parsePostData(
+  parsed: PostGrayMatter,
+  fileName: string,
+  filePath?: string
+): Post {
+  // 디렉토리 경로에서 카테고리 추론
+  const category = filePath ? extractCategoryFromPath(filePath) : undefined
+
   return {
     content: parsed.content,
-    data: parsed.data,
+    data: {
+      ...parsed.data,
+      // frontmatter에 category가 없으면 디렉토리에서 추론
+      category: parsed.data.category || category,
+    },
     slug: fileName.replace(/\.mdx$/, ''),
     author: author,
   }
+}
+
+/**
+ * 파일 경로에서 카테고리를 추론합니다.
+ */
+export function extractCategoryFromPath(filePath: string): string | undefined {
+  const pathSegments = filePath.split('/')
+  const contentsIndex = pathSegments.findIndex(
+    (segment) => segment === 'contents'
+  )
+
+  if (contentsIndex === -1 || contentsIndex >= pathSegments.length - 1) {
+    return undefined
+  }
+
+  const categorySegment = pathSegments[contentsIndex + 1]
+
+  // 카테고리가 유효한지 확인 (dev, life만 허용)
+  if (categorySegment === 'dev' || categorySegment === 'life') {
+    return categorySegment
+  }
+
+  return undefined
 }
 
 /**

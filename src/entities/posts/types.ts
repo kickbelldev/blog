@@ -1,10 +1,13 @@
 import type { GrayMatterFile } from 'gray-matter'
 
+import type { CategoryId } from '@/entities/categories/types'
+
 export type PostFrontMatter = {
   title: string
   date: string
   tags: Array<string>
   description: string
+  category?: CategoryId
 }
 
 export type Post = {
@@ -41,6 +44,7 @@ export type PostMetadata = {
     publishedTime: string
     authors: string[]
     tags: string[]
+    section?: string
   }
   twitter: {
     card: 'summary_large_image'
