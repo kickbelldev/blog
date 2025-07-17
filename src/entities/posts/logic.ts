@@ -41,14 +41,14 @@ export function extractCategoryFromPath(filePath: string): string | undefined {
     (segment) => segment === 'contents'
   )
 
-  if (contentsIndex === -1 || contentsIndex >= pathSegments.length - 1) {
+  if (contentsIndex === -1 || contentsIndex >= pathSegments.length - 2) {
     return undefined
   }
 
   const categorySegment = pathSegments[contentsIndex + 1]
 
-  // 카테고리가 유효한지 확인 (dev, life만 허용)
-  if (categorySegment === 'dev' || categorySegment === 'life') {
+  // 파일명이 아닌 디렉토리인지 확인 (최소 2단계 deeper: contents/category/file.mdx)
+  if (contentsIndex + 2 < pathSegments.length) {
     return categorySegment
   }
 

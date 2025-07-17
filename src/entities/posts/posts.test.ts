@@ -346,10 +346,10 @@ describe('Posts Logic - Business Logic Tests', () => {
       expect(result).toBeUndefined()
     })
 
-    it('should return undefined for invalid category', () => {
-      const path = '/home/user/project/src/contents/invalid/post.mdx'
+    it('should extract any category from path', () => {
+      const path = '/home/user/project/src/contents/custom/post.mdx'
       const result = extractCategoryFromPath(path)
-      expect(result).toBeUndefined()
+      expect(result).toBe('custom')
     })
 
     it('should return undefined for path without contents directory', () => {
