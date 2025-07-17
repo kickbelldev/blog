@@ -1,5 +1,5 @@
 import { cn } from '@/app/_lib/cn'
-import { type CategoryId, getCategoryById } from '@/entities/categories'
+import { type CategoryId, getCategoryById } from '@/entities/blog'
 
 interface CategoryBadgeProps {
   categoryId: CategoryId
@@ -7,12 +7,12 @@ interface CategoryBadgeProps {
   showIcon?: boolean
 }
 
-export async function CategoryBadge({
+export function CategoryBadge({
   categoryId,
   className,
   showIcon = true,
 }: CategoryBadgeProps) {
-  const category = await getCategoryById(categoryId)
+  const category = getCategoryById(categoryId)
 
   if (!category) {
     return null

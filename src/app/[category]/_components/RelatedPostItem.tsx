@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { formatDate } from '@/app/_lib/formatDate'
-import type { Post } from '@/entities/posts/types'
+import type { Post } from '@/entities/blog'
 
 import { TagList } from './TagList'
 

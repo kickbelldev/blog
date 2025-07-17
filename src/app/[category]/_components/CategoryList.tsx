@@ -1,9 +1,8 @@
 import { cn } from '@/app/_lib/cn'
 import {
+  categories as allCategories,
   type CategoryWithCount,
-  getAllCategories,
-  getCategoriesWithCount,
-} from '@/entities/categories'
+} from '@/entities/blog'
 
 import { CategoryBadge } from './CategoryBadge'
 
@@ -20,7 +19,7 @@ export function CategoryList({
 }: CategoryListProps) {
   const displayCategories =
     categories ||
-    getAllCategories().map((cat) => ({
+    allCategories.map((cat) => ({
       ...cat,
       count: 0,
     }))

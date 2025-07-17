@@ -5,12 +5,11 @@ import {
   getCategoryById,
   getPostsByCategory,
   isValidCategoryId,
-} from '@/entities/categories'
-import { getAllPosts } from '@/entities/posts'
+} from '@/entities/blog'
 
 import { CategoryBadge } from './_components/CategoryBadge'
 
-export async function generateStaticParams() {
+export function generateStaticParams() {
   return categories.map((category) => ({
     category: category.id,
   }))
@@ -19,19 +18,18 @@ export async function generateStaticParams() {
 export default async function CategoryPage({
   params,
 }: {
-  params: {
+  params: Promise<{
     category: string
-  }
+  }>
 }) {
-  const { category } = params
+  const { category } = await params
 
-  if (!(await isValidCategoryId(category))) {
+  if (!isValidCategoryId(category)) {
     notFound()
   }
 
-  const categoryInfo = await getCategoryById(category)
-  const allPosts = await getAllPosts()
-  const categoryPosts = getPostsByCategory(allPosts, category)
+  const categoryInfo = getCategoryById(category)
+  const categoryPosts = getPostsByCategory(category)
 
   if (!categoryInfo) {
     notFound()

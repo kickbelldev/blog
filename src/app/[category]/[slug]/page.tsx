@@ -7,13 +7,15 @@ import {
   PostNavigation,
   RelatedPosts,
 } from '@/app/[category]/_components'
-import { type CategoryId, isValidCategoryId } from '@/entities/categories'
-import { getAllPosts, getPostNavigation } from '@/entities/posts'
-import { getRelatedPostsByTags } from '@/entities/tags'
+import {
+  type CategoryId,
+  getPostNavigation,
+  getRelatedPostsByTags,
+  isValidCategoryId,
+  posts,
+} from '@/entities/blog'
 
-export async function generateStaticParams() {
-  const posts = await getAllPosts()
-
+export function generateStaticParams() {
   const params = posts
     .filter((post) => post.data.category) // 카테고리가 있는 포스트만
     .map((post) => ({
@@ -51,8 +53,8 @@ export default async function PostPage({
       notFound()
     }
 
-    const { previousPost, nextPost } = await getPostNavigation(decodedSlug)
-    const relatedPosts = await getRelatedPostsByTags(decodedSlug)
+    const { previousPost, nextPost } = getPostNavigation(decodedSlug)
+    const relatedPosts = getRelatedPostsByTags(decodedSlug)
 
     return (
       <div className="mx-auto px-5 py-8 max-w-4xl">

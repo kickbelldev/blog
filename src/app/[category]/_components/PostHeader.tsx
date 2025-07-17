@@ -1,6 +1,6 @@
 import { cn } from '@/app/_lib/cn'
 import { formatDate } from '@/app/_lib/formatDate'
-import type { CategoryId } from '@/entities/categories/types'
+import type { CategoryId } from '@/entities/blog'
 
 import { CategoryBadge } from './CategoryBadge'
 import { TagList } from './TagList'

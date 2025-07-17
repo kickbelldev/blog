@@ -1,13 +1,11 @@
 import Link from 'next/link'
 
-import { getCategoriesWithCount } from '@/entities/categories'
-import { getAllPosts } from '@/entities/posts'
+import { getCategoriesWithCount } from '@/entities/blog'
 
 import NavLink from './NavLink'
 
-export default async function Header() {
-  const posts = await getAllPosts()
-  const categories = await getCategoriesWithCount(posts)
+export default function Header() {
+  const categories = getCategoriesWithCount()
 
   return (
     <header className="sticky top-0 z-50 border-b border-stone-200 bg-white">

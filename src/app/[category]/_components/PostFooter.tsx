@@ -5,7 +5,7 @@ interface PostFooterProps {
   className?: string
 }
 
-export function PostFooter({ author, className }: PostFooterProps) {
+export function PostFooter({ className }: PostFooterProps) {
   return (
     <footer className={cn('pt-8', className)}>
       {/* TODO: Implement AuthorInfo */}
