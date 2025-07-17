@@ -1,6 +1,14 @@
 import Link from 'next/link'
 
-export default function Header() {
+import { getCategoriesWithCount } from '@/entities/categories'
+import { getAllPosts } from '@/entities/posts'
+
+import NavLink from './NavLink'
+
+export default async function Header() {
+  const posts = await getAllPosts()
+  const categories = await getCategoriesWithCount(posts)
+
   return (
     <header className="sticky top-0 z-50 border-b border-stone-200 bg-white">
       <nav className="container mx-auto px-5 h-14 flex items-center gap-x-6">
@@ -12,18 +20,16 @@ export default function Header() {
         </Link>
 
         <div className="flex items-center space-x-6">
-          <Link
-            href="/tags"
-            className="text-stone-500 hover:text-stone-900 transition-colors"
-          >
-            Tags
-          </Link>
-          <Link
-            href="/about"
-            className="text-stone-500 hover:text-stone-900 transition-colors"
-          >
-            About
-          </Link>
+          {categories.map((category) => (
+            <NavLink
+              key={category.id}
+              href={`/categories/${category.id}`}
+            >
+              {category.name}
+            </NavLink>
+          ))}
+          <NavLink href="/tags">Tags</NavLink>
+          <NavLink href="/about">About</NavLink>
         </div>
       </nav>
     </header>
