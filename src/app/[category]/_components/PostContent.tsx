@@ -1,5 +1,5 @@
 import { cn } from '@/app/_lib/cn'
-import type { Heading } from '@/entities/blog'
+import type { Heading } from '@/domain/blog'
 
 interface PostContentProps {
   children: React.ReactNode

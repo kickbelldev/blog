@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import { cn } from '@/app/_lib/cn'
 import { formatDate } from '@/app/_lib/formatDate'
-import type { Post } from '@/entities/blog'
+import type { Post } from '@/domain/blog'
 
 interface PostNavigationProps {
   previousPost?: Pick<Post, 'slug' | 'data'>

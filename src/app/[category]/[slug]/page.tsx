@@ -13,7 +13,7 @@ import {
   getRelatedPostsByTags,
   isValidCategoryId,
   posts,
-} from '@/entities/blog'
+} from '@/domain/blog'
 
 export function generateStaticParams() {
   const params = posts
@@ -37,6 +37,8 @@ export default async function PostPage({
   const { category, slug } = await params
   const decodedSlug = decodeURIComponent(slug)
 
+  console.log(category, slug, decodedSlug)
+
   // 카테고리 유효성 검증
   if (!isValidCategoryId(category)) {
     notFound()
@@ -45,7 +47,7 @@ export default async function PostPage({
   try {
     // 카테고리 기반 경로로 MDX 파일 import
     const { default: Post, frontmatter } = await import(
-      `@/contents/${category}/${decodedSlug}`
+      `@/contents/${category}/${decodedSlug}.mdx`
     )
 
     // 포스트의 실제 카테고리와 URL 카테고리가 일치하는지 확인
