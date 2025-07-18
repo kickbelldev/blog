@@ -9,6 +9,7 @@ import {
 } from '@/app/[category]/_components'
 import {
   type CategoryId,
+  extractHeadingsFromMDX,
   getPostNavigation,
   getRelatedPostsByTags,
   isValidCategoryId,
@@ -55,13 +56,20 @@ export default async function PostPage({
       notFound()
     }
 
+    // 포스트 콘텐츠에서 헤딩 추출 (실제 포스트 내용 필요)
+    const postData = posts.find((post) => post.slug === decodedSlug)
+    const headings = postData ? extractHeadingsFromMDX(postData.content) : []
+
     const { previousPost, nextPost } = getPostNavigation(decodedSlug)
     const relatedPosts = getRelatedPostsByTags(decodedSlug)
 
     return (
       <div className="mx-auto px-5 py-8 max-w-4xl">
         <PostHeader {...frontmatter} />
-        <PostContent>
+        <PostContent
+          showTOC={headings.length > 0}
+          headings={headings}
+        >
           <Post />
         </PostContent>
         <PostFooter />

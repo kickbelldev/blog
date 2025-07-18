@@ -8,6 +8,7 @@ import {
   getAllCategories,
   validateCategoryId,
 } from './logic/categories'
+import { extractHeadingsFromMDX, generateHeadingId } from './logic/headings'
 import { filterPostsByTag, findAdjacentPosts, getAllPosts } from './logic/posts'
 import {
   analyzeTagRelationships,
@@ -94,6 +95,9 @@ export function getRelatedPostsByTags(currentSlug: string, limit: number = 3) {
 }
 
 export { allTags as tags }
+
+// ===== Headings API =====
+export { extractHeadingsFromMDX, generateHeadingId }
 
 // ===== Default exports =====
 export default {
