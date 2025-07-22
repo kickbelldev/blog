@@ -1,6 +1,8 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+import { createCategoryMetadata } from '@/app/_lib/metadata'
 import {
   categories,
   getCategoryById,
@@ -14,6 +16,29 @@ export function generateStaticParams() {
   return categories.map((category) => ({
     category: category.id,
   }))
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{
+    category: string
+  }>
+}): Promise<Metadata> {
+  const { category } = await params
+
+  if (!isValidCategoryId(category)) {
+    return {}
+  }
+
+  const categoryInfo = getCategoryById(category)
+  const categoryPosts = getPostsByCategory(category)
+
+  if (!categoryInfo) {
+    return {}
+  }
+
+  return createCategoryMetadata(categoryInfo, categoryPosts.length)
 }
 
 export default async function CategoryPage({
@@ -37,7 +62,7 @@ export default async function CategoryPage({
   }
 
   return (
-    <div className="mx-auto px-5 py-8 max-w-4xl">
+    <div className="mx-auto px-5 py-8 max-w-5xl">
       <header className="mb-8">
         <div className="flex items-center gap-3 mb-4">
           <CategoryBadge categoryId={category} />
