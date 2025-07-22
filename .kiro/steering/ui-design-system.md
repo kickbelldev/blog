@@ -144,7 +144,7 @@ text-4xl: 36px / 40px
 </div>
 
 // 최대 너비 제한
-<div className="max-w-4xl mx-auto px-5">
+<div className="max-w-5xl mx-auto px-5">
   {/* 콘텐츠 */}
 </div>
 ```

@@ -8,7 +8,7 @@ export default function Header() {
   const categories = getCategoriesWithCount()
 
   return (
-    <header className="sticky top-0 z-50 border-b border-stone-200 bg-white">
+    <header className="sticky top-0 inset-x-0 z-50 border-b border-stone-200 bg-white">
       <nav className="container mx-auto px-5 h-14 flex items-center gap-x-6">
         <Link
           href="/"
