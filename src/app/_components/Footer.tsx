@@ -1,3 +1,4 @@
+import { Rss } from 'lucide-react'
 import Link from 'next/link'
 
 export default function Footer() {
@@ -30,7 +31,6 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-stone-900 text-sm mb-2">Links</h4>
             <div className="flex gap-4 md:flex-col md:gap-0 md:space-y-1">
-              {/* TODO: RSS 추가 */}
               <Link
                 href="https://github.com/kickbelldev"
                 target="_blank"
@@ -38,6 +38,14 @@ export default function Footer() {
                 className="text-sm text-stone-600 hover:text-stone-900 transition-colors"
               >
                 GitHub
+              </Link>
+              <Link
+                href="/rss.xml"
+                className="text-sm text-stone-600 hover:text-stone-900 transition-colors inline-flex items-center gap-1"
+                title="RSS Feed"
+              >
+                <Rss className="w-3 h-3" />
+                RSS
               </Link>
             </div>
           </div>

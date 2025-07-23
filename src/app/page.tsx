@@ -1,12 +1,16 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { formatDate } from '@/app/_lib/formatDate'
+import { createHomeMetadata } from '@/app/_lib/metadata'
 import {
   allPosts,
   allTags,
   getCategoriesWithCount,
   type Post,
 } from '@/domain/blog'
+
+export const metadata: Metadata = createHomeMetadata()
 
 export default function Home() {
   const categories = getCategoriesWithCount()
@@ -15,16 +19,6 @@ export default function Home() {
 
   return (
     <div className="mx-auto px-5 py-8 max-w-6xl">
-      {/* Hero Section */}
-      <section className="text-center py-12 mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-stone-900 mb-4">
-          개발과 삶의 이야기
-        </h1>
-        <p className="text-xl text-stone-600 max-w-2xl mx-auto">
-          개발 경험, 기술 학습, 그리고 일상의 인사이트를 공유하는 공간입니다.
-        </p>
-      </section>
-
       {/* Categories Section */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold text-stone-900 mb-6">카테고리</h2>

@@ -11,21 +11,9 @@
 - **docs/**: 문서 작업용 브랜치
 
 ### 브랜치 네이밍
-```bash
-# 기능 개발 (실제 프로젝트 패턴)
-feat/entities
-feat/post-navigation
-feat/entity-optimization-and-category-system
-
-# 버그 수정
-fix/resolve-navigation-issue
-fix/correct-typo-in-header
-
-# 문서/설정 작업
-docs/claude-pr-workflow
-config/github-templates
-config/tailwind-setup
-```
+- `feat/feature-name` - 기능 개발
+- `fix/issue-name` - 버그 수정  
+- `docs/document-name` - 문서 작업
 
 ## 커밋 컨벤션
 
@@ -49,7 +37,20 @@ footer (optional)
 
 ## 논리적 단위 커밋
 
-- 커밋은 변경사항 그룹끼리 묶여서 작성
+### 기본 원칙
+- **하나의 커밋 = 하나의 논리적 변경사항**
+- 서로 다른 기능/목적의 변경사항은 별도 커밋으로 분리
+- 각 커밋은 독립적으로 동작할 수 있어야 함
+
+### 커밋 워크플로우 (TodoWrite 필수)
+1. **변경사항 분석**: `git status`, `git diff` 확인
+2. **TodoWrite로 논리적 단위 계획**: 각 기능별 커밋 목록 작성
+3. **단계별 커밋**: 할일 완료하며 순차 실행
+4. **진행 추적**: TodoWrite에서 완료 체크
+
+### 올바른 커밋 분리
+- ✅ 기능별 분리: 메타데이터 / RSS / 레이아웃
+- ❌ 모든 변경사항을 한 번에 커밋
 
 ## PR 프로세스
 
